@@ -1,8 +1,8 @@
 
 if( typeof module !== 'undefined' )
 {
-  require( 'wvector' );
-  // require( '../staging/amath/arithmetic/xAnArray.s' );
+  // require( 'wvector' );
+  require( '../staging/amath/cvector/nArray.s' );
 }
 
 var _ = wTools;

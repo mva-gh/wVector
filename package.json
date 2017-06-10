@@ -33,7 +33,8 @@
   },
   "dependencies": {
     "wTools": "",
-    "wProto": ""
+    "wProto": "",
+    "wscalar": ""
   },
   "devDependencies": {
     "wTesting": "",

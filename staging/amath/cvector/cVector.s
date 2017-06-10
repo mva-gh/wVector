@@ -19,10 +19,11 @@ if( typeof module !== 'undefined' )
 
   try
   {
-    require( './cArithmetic.s' );
+    require( '../arithmetic/aScalar.s' );
   }
   catch( err )
   {
+    require( 'wscalar' );
   }
 
 }
@@ -504,9 +505,9 @@ _.assert( Self.array.makeArrayOfLength );
 
 if( typeof module !== 'undefined' )
 {
-  require( './fVectorOperations.s' );
-  require( './fVectorRoutines.s' );
-  require( './gVectorMethods.s' );
+  require( './cVectorOperations.s' );
+  require( './cVectorRoutines.s' );
+  require( './mVectorMethods.s' );
 }
 
 })();

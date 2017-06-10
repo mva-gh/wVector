@@ -4,14 +4,18 @@
 
 if( typeof module !== 'undefined' )
 {
+
   try
   {
-    require( './cArithmetic.s' );
+    require( '../../abase/wTools.s' );
   }
   catch( err )
   {
+    require( 'wTools' );
   }
-  require( './fVector.s' );
+
+  require( './cVector.s' );
+
 }
 
 var _ = wTools;
