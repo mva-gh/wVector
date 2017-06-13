@@ -97,7 +97,7 @@ function copy( src )
 {
   var self = this;
   _.assert( arguments.length === 1 );
-  return vector.assign( self,src );
+  return vector.set( self,src );
 }
 
 //
@@ -109,7 +109,7 @@ function toArray()
   _.assert( arguments.length === 0 );
   _.assert( _.vectorIs( self ) );
 
-  return vector._toArray( self );
+  return vector.toArray( self );
 }
 
 //
@@ -214,19 +214,19 @@ equivalentWith.modifying = false;
 
 //
 
-function hasSameShape( src )
+function hasShape( src )
 {
   if( _.spaceIs( src ) )
   return src.dims.length === 2 && src.dims[ 0 ] === self.length && src.dims[ 1 ] === 1;
   return this.length === src.length;
 }
 
-hasSameShape.takingArguments = 2;
-hasSameShape.takingVectors = 2;
-hasSameShape.takingVectorsOnly = true;
-hasSameShape.returningSelf = false;
-hasSameShape.returningNew = false;
-hasSameShape.modifying = false;
+hasShape.takingArguments = 2;
+hasShape.takingVectors = 2;
+hasShape.takingVectorsOnly = true;
+hasShape.returningSelf = false;
+hasShape.returningNew = false;
+hasShape.modifying = false;
 
 // --
 // proto
@@ -252,7 +252,7 @@ var Proto =
   identicalWith : identicalWith,
   equivalentWith : equivalentWith,
 
-  hasSameShape : hasSameShape,
+  hasShape : hasShape,
 
 }
 
@@ -280,7 +280,30 @@ function declareSingleArgumentRoutine( routine, r )
   {
     _.assert( arguments.length === 0 );
     _.assert( _.vectorIs( this ) );
-    return routine( this );
+    return routine.call( vector,this );
+  }
+
+}
+
+//
+
+function declareTwoArgumentsRoutine( routine, r )
+{
+
+  var op = routine.operation;
+
+  if( !_.arrayIdentical( op.takingArguments , [ 2,2 ] ) )
+  return false;
+  if( !_.arrayIdentical( op.takingVectors , [ 1,1 ] ) )
+  return false;
+
+  _.assert( Self.prototype[ r ] === undefined );
+
+  Self.prototype[ r ] = function scalarRoutine( scalar )
+  {
+    _.assert( arguments.length === 1 );
+    _.assert( _.vectorIs( this ) );
+    return routine.call( vector,this,scalar );
   }
 
 }
@@ -294,7 +317,8 @@ for( var r in routines )
 
   _.assert( _.routineIs( routine ) );
 
-  declareSingleArgumentRoutine( routine, r );
+  declareSingleArgumentRoutine( routine , r );
+  declareTwoArgumentsRoutine( routine , r );
 
 }
 

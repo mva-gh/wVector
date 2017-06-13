@@ -1,4 +1,4 @@
-(function _xAnArray_s_() {
+(function _vAvector_s_() {
 
 'use strict';
 
@@ -94,12 +94,11 @@ for( var r in routines )
 Object.setPrototypeOf( Self,wTools );
 
 _.mapExtend( Self,Proto );
-/*_.mapSupplement( Self,numeric );*/
 
-wTools.anarray = Self;
+wTools.avector = Self;
 
 _.assert( Object.getPrototypeOf( Self ) === wTools );
 _.assert( _.objectIs( _row._routineMathematical ) );
-_.assert( _.anarray.isValid );
+_.assert( _.avector.isValid );
 
 })();

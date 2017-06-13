@@ -1,4 +1,4 @@
-(function _fVector_s_() {
+(function _cVector_s_() {
 
 'use strict';
 
@@ -19,7 +19,7 @@ if( typeof module !== 'undefined' )
 
   try
   {
-    require( '../arithmetic/aScalar.s' );
+    require( '../arithmetic/cScalar.s' );
   }
   catch( err )
   {
@@ -39,6 +39,12 @@ var _sqr = _.sqr;
 var _assert = _.assert;
 var _assertMapHasOnly = _.assertMapHasOnly;
 var _routineIs = _.routineIs;
+
+if( _.EPS === undefined )
+_.EPS = 1e-5;
+
+if( _.EPS2 === undefined )
+_.EPS2 = 1e-10;
 
 var Parent = null;
 var Self = Object.create( null );
@@ -109,7 +115,7 @@ function from( srcArray )
 
   if( _.vectorIs( srcArray ) )
   return srcArray;
-  else if( _.arrayIs( srcArray ) )
+  else if( _.arrayLike( srcArray ) )
   return fromArray( srcArray );
   else if( _.spaceIs( srcArray ) )
   {

@@ -19,8 +19,8 @@ if( typeof module !== 'undefined' )
 
   _.include( 'wTesting' );
 
-  require( '../arithmetic/fVector.s' );
-  require( '../arithmetic/xAnArray.s' );
+  require( '../cvector/cVector.s' );
+  require( '../cvector/vAvector.s' );
 
 }
 
@@ -30,7 +30,7 @@ var _ = wTools.withArray.Float32;
 var Space = _.Space;
 var vector = _.vector;
 var vec = _.vector.fromArray;
-var anarray = _.anarray;
+var avector = _.avector;
 var sqrt = _.sqrt;
 
 var Parent = wTools.Testing;
@@ -191,25 +191,25 @@ function dot( test )
   test.description = 'anrarrays'; //
 
   var expected = 80;
-  var got = _.anarray.dot( a,b );
+  var got = _.avector.dot( a,b );
   test.identical( got,expected )
 
   test.description = 'orthogonal anrarrays'; //
 
   var expected = 0;
-  var got = _.anarray.dot( or1,or2 );
+  var got = _.avector.dot( or1,or2 );
   test.identical( got,expected )
 
   test.description = 'empty anarrays'; //
 
   var expected = 0;
-  var got = _.anarray.dot( [],[] );
+  var got = _.avector.dot( [],[] );
   test.identical( got,expected )
 
   test.description = 'empty vectors'; //
 
   var expected = 0;
-  var got = _.anarray.dot( vec([]),vec([]) );
+  var got = _.avector.dot( vec([]),vec([]) );
   test.identical( got,expected )
 
   test.description = 'sub vectors'; //
@@ -217,7 +217,7 @@ function dot( test )
   var av = _.vector.fromSubArray( a,1,3 );
   var bv = _.vector.fromSubArray( b,1,3 );
   var expected = 74;
-  var got = _.anarray.dot( av,bv );
+  var got = _.avector.dot( av,bv );
   test.identical( got,expected );
 
   test.description = 'bad arguments'; //
@@ -225,13 +225,13 @@ function dot( test )
   if( Config.debug )
   {
 
-    test.shouldThrowErrorSync( () => _.anarray.dot( 1 ) );
-    test.shouldThrowErrorSync( () => _.anarray.dot( [ 1 ],1 ) );
-    test.shouldThrowErrorSync( () => _.anarray.dot( [ 1 ],[ 1,2,3 ] ) );
-    test.shouldThrowErrorSync( () => _.anarray.dot( [ 1 ],undefined ) );
-    test.shouldThrowErrorSync( () => _.anarray.dot( [ 1 ],[ 1 ],1 ) );
-    test.shouldThrowErrorSync( () => _.anarray.dot( [ 1 ],[ 1 ],[ 1 ] ) );
-    test.shouldThrowErrorSync( () => _.anarray.dot( [],function(){} ) );
+    test.shouldThrowErrorSync( () => _.avector.dot( 1 ) );
+    test.shouldThrowErrorSync( () => _.avector.dot( [ 1 ],1 ) );
+    test.shouldThrowErrorSync( () => _.avector.dot( [ 1 ],[ 1,2,3 ] ) );
+    test.shouldThrowErrorSync( () => _.avector.dot( [ 1 ],undefined ) );
+    test.shouldThrowErrorSync( () => _.avector.dot( [ 1 ],[ 1 ],1 ) );
+    test.shouldThrowErrorSync( () => _.avector.dot( [ 1 ],[ 1 ],[ 1 ] ) );
+    test.shouldThrowErrorSync( () => _.avector.dot( [],function(){} ) );
 
   }
 
@@ -314,14 +314,14 @@ function reduceToMinmax( test )
     max : { value : 1, index : 0, container : vec( ar ) },
   };
 
-  var got = _.anarray.reduceToMinmax( ar );
+  var got = _.avector.reduceToMinmax( ar );
   test.identical( got,expected );
 
   test.description = 'reduceToMax single element'; //
 
   var ar = [ 1 ];
   var expected = { value : 1, index : 0, container : vec( ar ) };
-  var got = _.anarray.reduceToMax( ar );
+  var got = _.avector.reduceToMax( ar );
   test.identical( got,expected );
 
   var ar = [ 1 ];
@@ -337,7 +337,7 @@ function reduceToMinmax( test )
     max : { value : 5, index : 4, container : vec( a ) },
   };
 
-  var got = _.anarray.reduceToMinmax( a );
+  var got = _.avector.reduceToMinmax( a );
   test.identical( got,expected );
 
   test.description = 'simplest case with filtering'; //
@@ -348,7 +348,7 @@ function reduceToMinmax( test )
     max : { value : 4, index : 3, container : vec( a ) },
   };
 
-  var got = _.anarray.reduceToMinmaxFiltering( a,filter );
+  var got = _.avector.reduceToMinmaxFiltering( a,filter );
   test.identical( got,expected );
 
   test.description = 'several vectors'; //
@@ -359,7 +359,7 @@ function reduceToMinmax( test )
     max : { value : 99, index : 3, container : vec( b ) },
   };
 
-  var got = _.anarray.reduceToMinmax( a,b );
+  var got = _.avector.reduceToMinmax( a,b );
   test.identical( got,expected );
 
   test.description = 'several vectors with filtering'; //
@@ -370,7 +370,7 @@ function reduceToMinmax( test )
     max : { value : 44, index : 11, container : vec( b ) },
   };
 
-  var got = _.anarray.reduceToMinmaxFiltering( a,b,filter );
+  var got = _.avector.reduceToMinmaxFiltering( a,b,filter );
   test.identical( got,expected );
 
   test.description = 'empty array'; //
@@ -380,7 +380,7 @@ function reduceToMinmax( test )
     min : { value : NaN, index : -1, container : null },
     max : { value : NaN, index : -1, container : null },
   };
-  var got = _.anarray.reduceToMinmax( empty );
+  var got = _.avector.reduceToMinmax( empty );
   test.identical( got,expected )
 
   test.description = 'empty array with filtering'; //
@@ -390,7 +390,7 @@ function reduceToMinmax( test )
     min : { value : NaN, index : -1, container : null },
     max : { value : NaN, index : -1, container : null },
   };
-  var got = _.anarray.reduceToMinmaxFiltering( empty,filter );
+  var got = _.avector.reduceToMinmaxFiltering( empty,filter );
   test.identical( got,expected )
 
   test.description = 'no array'; //
@@ -400,7 +400,7 @@ function reduceToMinmax( test )
     min : { value : NaN, index : -1, container : null },
     max : { value : NaN, index : -1, container : null },
   };
-  var got = _.anarray.reduceToMinmax();
+  var got = _.avector.reduceToMinmax();
   test.identical( got,expected )
 
   test.description = 'no array with filtering'; //
@@ -410,7 +410,7 @@ function reduceToMinmax( test )
     min : { value : NaN, index : -1, container : null },
     max : { value : NaN, index : -1, container : null },
   };
-  var got = _.anarray.reduceToMinmaxFiltering( filter );
+  var got = _.avector.reduceToMinmaxFiltering( filter );
   test.identical( got,expected )
 
   test.description = 'bad arguments'; //
@@ -418,16 +418,16 @@ function reduceToMinmax( test )
   if( Config.debug )
   {
 
-    test.shouldThrowErrorSync( () => _.anarray.reduceToMinmax( 1 ) );
-    test.shouldThrowErrorSync( () => _.anarray.reduceToMinmax( [ 1 ],1 ) );
-    test.shouldThrowErrorSync( () => _.anarray.reduceToMinmax( [ 1 ],undefined ) );
+    test.shouldThrowErrorSync( () => _.avector.reduceToMinmax( 1 ) );
+    test.shouldThrowErrorSync( () => _.avector.reduceToMinmax( [ 1 ],1 ) );
+    test.shouldThrowErrorSync( () => _.avector.reduceToMinmax( [ 1 ],undefined ) );
 
-    test.shouldThrowErrorSync( () => _.anarray.reduceToMinmaxFiltering( [ 1,2,3 ] ) );
-    test.shouldThrowErrorSync( () => _.anarray.reduceToMinmaxFiltering( [ 1,2,3 ],null ) );
-    test.shouldThrowErrorSync( () => _.anarray.reduceToMinmaxFiltering( [ 1,2,3 ],function(){} ) );
-    test.shouldThrowErrorSync( () => _.anarray.reduceToMinmaxFiltering( 1,filter ) );
-    test.shouldThrowErrorSync( () => _.anarray.reduceToMinmaxFiltering( [ 1 ],1,filter ) );
-    test.shouldThrowErrorSync( () => _.anarray.reduceToMinmaxFiltering( [ 1 ],undefined,filter ) );
+    test.shouldThrowErrorSync( () => _.avector.reduceToMinmaxFiltering( [ 1,2,3 ] ) );
+    test.shouldThrowErrorSync( () => _.avector.reduceToMinmaxFiltering( [ 1,2,3 ],null ) );
+    test.shouldThrowErrorSync( () => _.avector.reduceToMinmaxFiltering( [ 1,2,3 ],function(){} ) );
+    test.shouldThrowErrorSync( () => _.avector.reduceToMinmaxFiltering( 1,filter ) );
+    test.shouldThrowErrorSync( () => _.avector.reduceToMinmaxFiltering( [ 1 ],1,filter ) );
+    test.shouldThrowErrorSync( () => _.avector.reduceToMinmaxFiltering( [ 1 ],undefined,filter ) );
 
   }
 
@@ -441,7 +441,7 @@ function atomParrallelWithScalar( test )
   test.description = 'assignScalar'; //
 
   var dst = [ 1,2,3 ];
-  _.anarray.assignScalar( dst,5 );
+  _.avector.assignScalar( dst,5 );
   test.identical( dst,[ 5,5,5 ] );
 
   var dst = vec([ 1,2,3 ]);
@@ -449,13 +449,13 @@ function atomParrallelWithScalar( test )
   test.identical( dst,vec([ 5,5,5 ]) );
 
   var dst = [];
-  _.anarray.assignScalar( dst,5 );
+  _.avector.assignScalar( dst,5 );
   test.identical( dst,[] );
 
   test.description = 'addScalar'; //
 
   var dst = [ 1,2,3 ];
-  _.anarray.addScalar( dst,5 );
+  _.avector.addScalar( dst,5 );
   test.identical( dst,[ 6,7,8 ] );
 
   var dst = vec([ 1,2,3 ]);
@@ -463,13 +463,13 @@ function atomParrallelWithScalar( test )
   test.identical( dst,vec([ 6,7,8 ]) );
 
   var dst = [];
-  _.anarray.addScalar( dst,5 );
+  _.avector.addScalar( dst,5 );
   test.identical( dst,[] );
 
   test.description = 'subScalar'; //
 
   var dst = [ 1,2,3 ];
-  _.anarray.subScalar( dst,5 );
+  _.avector.subScalar( dst,5 );
   test.identical( dst,[ -4,-3,-2 ] );
 
   var dst = vec([ 1,2,3 ]);
@@ -477,13 +477,13 @@ function atomParrallelWithScalar( test )
   test.identical( dst,vec([ -4,-3,-2 ]) );
 
   var dst = [];
-  _.anarray.subScalar( dst,5 );
+  _.avector.subScalar( dst,5 );
   test.identical( dst,[] );
 
   test.description = 'mulScalar'; //
 
   var dst = [ 1,2,3 ];
-  _.anarray.mulScalar( dst,5 );
+  _.avector.mulScalar( dst,5 );
   test.identical( dst,[ 5,10,15 ] );
 
   var dst = vec([ 1,2,3 ]);
@@ -491,13 +491,13 @@ function atomParrallelWithScalar( test )
   test.identical( dst,vec([ 5,10,15 ]) );
 
   var dst = [];
-  _.anarray.mulScalar( dst,5 );
+  _.avector.mulScalar( dst,5 );
   test.identical( dst,[] );
 
   test.description = 'divScalar'; //
 
   var dst = [ 1,2,3 ];
-  _.anarray.divScalar( dst,5 );
+  _.avector.divScalar( dst,5 );
   test.identical( dst,[ 1/5,2/5,3/5 ] );
 
   var dst = vec([ 1,2,3 ]);
@@ -505,7 +505,7 @@ function atomParrallelWithScalar( test )
   test.identical( dst,vec([ 1/5,2/5,3/5 ]) );
 
   var dst = [];
-  _.anarray.divScalar( dst,5 );
+  _.avector.divScalar( dst,5 );
   test.identical( dst,[] );
 
   test.description = 'bad arguments'; //
@@ -513,14 +513,14 @@ function atomParrallelWithScalar( test )
   function shouldThrowError( name )
   {
 
-    test.shouldThrowErrorSync( () => _.anarray[ name ]() );
-    test.shouldThrowErrorSync( () => _.anarray[ name ]( 1 ) );
-    test.shouldThrowErrorSync( () => _.anarray[ name ]( 1,3 ) );
-    test.shouldThrowErrorSync( () => _.anarray[ name ]( '1','3' ) );
-    test.shouldThrowErrorSync( () => _.anarray[ name ]( [],[] ) );
-    test.shouldThrowErrorSync( () => _.anarray[ name ]( [],1,3 ) );
-    test.shouldThrowErrorSync( () => _.anarray[ name ]( [],1,undefined ) );
-    test.shouldThrowErrorSync( () => _.anarray[ name ]( [],undefined ) );
+    test.shouldThrowErrorSync( () => _.avector[ name ]() );
+    test.shouldThrowErrorSync( () => _.avector[ name ]( 1 ) );
+    test.shouldThrowErrorSync( () => _.avector[ name ]( 1,3 ) );
+    test.shouldThrowErrorSync( () => _.avector[ name ]( '1','3' ) );
+    test.shouldThrowErrorSync( () => _.avector[ name ]( [],[] ) );
+    test.shouldThrowErrorSync( () => _.avector[ name ]( [],1,3 ) );
+    test.shouldThrowErrorSync( () => _.avector[ name ]( [],1,undefined ) );
+    test.shouldThrowErrorSync( () => _.avector[ name ]( [],undefined ) );
 
     test.shouldThrowErrorSync( () => _.vector[ name ]() );
     test.shouldThrowErrorSync( () => _.vector[ name ]( 1 ) );
@@ -553,169 +553,169 @@ function atomParrallelOnlyVectors( test )
 
   var dst = [ 1,2,3 ];
   var src1 = [ 3,2,1 ];
-  _.anarray.addVectors( dst,src1 );
+  _.avector.addVectors( dst,src1 );
   test.identical( dst,[ 4,4,4 ] );
 
   var dst = [ 1,2,3 ];
   var src1 = [ 3,2,1 ];
   var src2 = [ 11,12,13 ];
-  _.anarray.addVectors( dst,src1,src2 );
+  _.avector.addVectors( dst,src1,src2 );
   test.identical( dst,[ 15,16,17 ] );
 
   test.description = 'addVectors vectors'; //
 
   var dst = vec([ 1,2,3 ]);
   var src1 = vec([ 3,2,1 ]);
-  _.anarray.addVectors( dst,src1 );
+  _.avector.addVectors( dst,src1 );
   test.identical( dst,vec([ 4,4,4 ]) );
 
   var dst = vec([ 1,2,3 ]);
   var src1 = vec([ 3,2,1 ]);
   var src2 = vec([ 11,12,13 ]);
-  _.anarray.addVectors( dst,src1,src2 );
+  _.avector.addVectors( dst,src1,src2 );
   test.identical( dst,vec([ 15,16,17 ]) );
 
   test.description = 'addVectors anarrays'; //
 
   var dst = [ 1,2,3 ];
   var src1 = [ 3,2,1 ];
-  _.anarray.addVectors( dst,src1 );
+  _.avector.addVectors( dst,src1 );
   test.identical( dst,[ 4,4,4 ] );
 
   var dst = [ 1,2,3 ];
   var src1 = [ 3,2,1 ];
   var src2 = [ 11,12,13 ];
-  _.anarray.addVectors( dst,src1,src2 );
+  _.avector.addVectors( dst,src1,src2 );
   test.identical( dst,[ 15,16,17 ] );
 
   test.description = 'subVectors anarrays'; //
 
   var dst = ([ 1,2,3 ]);
   var src1 = ([ 3,2,1 ]);
-  _.anarray.subVectors( dst,src1 );
+  _.avector.subVectors( dst,src1 );
   test.identical( dst,([ -2,0,+2 ]) );
 
   var dst = ([ 1,2,3 ]);
   var src1 = ([ 3,2,1 ]);
   var src2 = ([ 11,12,13 ]);
-  _.anarray.subVectors( dst,src1,src2 );
+  _.avector.subVectors( dst,src1,src2 );
   test.identical( dst,([ -13,-12,-11 ]) );
 
   test.description = 'subVectors vectors'; //
 
   var dst = vec([ 1,2,3 ]);
   var src1 = vec([ 3,2,1 ]);
-  _.anarray.subVectors( dst,src1 );
+  _.avector.subVectors( dst,src1 );
   test.identical( dst,vec([ -2,0,+2 ]) );
 
   var dst = vec([ 1,2,3 ]);
   var src1 = vec([ 3,2,1 ]);
   var src2 = vec([ 11,12,13 ]);
-  _.anarray.subVectors( dst,src1,src2 );
+  _.avector.subVectors( dst,src1,src2 );
   test.identical( dst,vec([ -13,-12,-11 ]) );
 
   test.description = 'mulVectors vectors'; //
 
   var dst = vec([ 1,2,3 ]);
   var src1 = vec([ 3,2,1 ]);
-  _.anarray.mulVectors( dst,src1 );
+  _.avector.mulVectors( dst,src1 );
   test.identical( dst,vec([ 3,4,3 ]) );
 
   var dst = vec([ 1,2,3 ]);
   var src1 = vec([ 3,2,1 ]);
   var src2 = vec([ 11,12,13 ]);
-  _.anarray.mulVectors( dst,src1,src2 );
+  _.avector.mulVectors( dst,src1,src2 );
   test.identical( dst,vec([ 33,48,39 ]) );
 
   test.description = 'mulVectors anarrays'; //
 
   var dst = [ 1,2,3 ];
   var src1 = [ 3,2,1 ];
-  _.anarray.mulVectors( dst,src1 );
+  _.avector.mulVectors( dst,src1 );
   test.identical( dst,[ 3,4,3 ] );
 
   var dst = [ 1,2,3 ];
   var src1 = [ 3,2,1 ];
   var src2 = [ 11,12,13 ];
-  _.anarray.mulVectors( dst,src1,src2 );
+  _.avector.mulVectors( dst,src1,src2 );
   test.identical( dst,[ 33,48,39 ] );
 
   test.description = 'divVectors vectors'; //
 
   var dst = vec([ 1,2,3 ]);
   var src1 = vec([ 3,2,1 ]);
-  _.anarray.divVectors( dst,src1 );
+  _.avector.divVectors( dst,src1 );
   test.identical( dst,vec([ 1/3,1,3 ]) );
 
   var dst = vec([ 1,2,3 ]);
   var src1 = vec([ 3,2,1 ]);
   var src2 = vec([ 11,12,13 ]);
-  _.anarray.divVectors( dst,src1,src2 );
+  _.avector.divVectors( dst,src1,src2 );
   test.identical( dst,vec([ 1/3/11,1/12,3/13 ]) );
 
   test.description = 'divVectors anarrays'; //
 
   var dst = [ 1,2,3 ];
   var src1 = [ 3,2,1 ];
-  _.anarray.divVectors( dst,src1 );
+  _.avector.divVectors( dst,src1 );
   test.identical( dst,[ 1/3,1,3 ] );
 
   var dst = [ 1,2,3 ];
   var src1 = [ 3,2,1 ];
   var src2 = [ 11,12,13 ];
-  _.anarray.divVectors( dst,src1,src2 );
+  _.avector.divVectors( dst,src1,src2 );
   test.identical( dst,[ 1/3/11,1/12,3/13 ] );
 
   test.description = 'minVectors vectors'; //
 
   var dst = vec([ 1,2,3 ]);
   var src1 = vec([ 3,2,1 ]);
-  _.anarray.minVectors( dst,src1 );
+  _.avector.minVectors( dst,src1 );
   test.identical( dst,vec([ 1,2,1 ]) );
 
   var dst = vec([ 1,2,3 ]);
   var src1 = vec([ 3,2,1 ]);
   var src2 = vec([ 11,0,13 ]);
-  _.anarray.minVectors( dst,src1,src2 );
+  _.avector.minVectors( dst,src1,src2 );
   test.identical( dst,vec([ 1,0,1 ]) );
 
   test.description = 'minVectors anarrays'; //
 
   var dst = [ 1,2,3 ];
   var src1 = [ 3,2,1 ];
-  _.anarray.minVectors( dst,src1 );
+  _.avector.minVectors( dst,src1 );
   test.identical( dst,[ 1,2,1 ] );
 
   var dst = [ 1,2,3 ];
   var src1 = [ 3,2,1 ];
   var src2 = [ 11,0,13 ];
-  _.anarray.minVectors( dst,src1,src2 );
+  _.avector.minVectors( dst,src1,src2 );
   test.identical( dst,[ 1,0,1 ] );
 
   test.description = 'maxVectors vectors'; //
 
   var dst = vec([ 1,2,3 ]);
   var src1 = vec([ 3,2,1 ]);
-  _.anarray.maxVectors( dst,src1 );
+  _.avector.maxVectors( dst,src1 );
   test.identical( dst,vec([ 3,2,3 ]) );
 
   var dst = vec([ 1,2,3 ]);
   var src1 = vec([ 3,2,1 ]);
   var src2 = vec([ 11,0,13 ]);
-  _.anarray.maxVectors( dst,src1,src2 );
+  _.avector.maxVectors( dst,src1,src2 );
   test.identical( dst,vec([ 11,2,13 ]) );
 
   test.description = 'maxVectors anarrays'; //
 
   var dst = [ 1,2,3 ];
   var src1 = [ 3,2,1 ];
-  _.anarray.maxVectors( dst,src1 );
+  _.avector.maxVectors( dst,src1 );
   test.identical( dst,[ 3,2,3 ] );
 
   var dst = [ 1,2,3 ];
   var src1 = [ 3,2,1 ];
   var src2 = [ 11,0,13 ];
-  _.anarray.maxVectors( dst,src1,src2 );
+  _.avector.maxVectors( dst,src1,src2 );
   test.identical( dst,[ 11,2,13 ] );
 
   test.description = 'empty vector'; //
@@ -725,7 +725,7 @@ function atomParrallelOnlyVectors( test )
 
     var dst = [];
     debugger;
-    var got = _.anarray[ rname ]( dst,[],[] );
+    var got = _.avector[ rname ]( dst,[],[] );
     test.shouldBe( got === dst );
     test.identical( got , [] );
 
@@ -752,13 +752,13 @@ function atomParrallelOnlyVectors( test )
   function shouldThrowError( rname )
   {
 
-    test.shouldThrowErrorSync( () => _.anarray[ rname ]() );
-    test.shouldThrowErrorSync( () => _.anarray[ rname ]( [ 1,2 ] ) );
-    test.shouldThrowErrorSync( () => _.anarray[ rname ]( [ 1,2 ],[ 3 ] ) );
-    test.shouldThrowErrorSync( () => _.anarray[ rname ]( [ 1,2 ],[ 3,4 ],[ 5 ] ) );
-    test.shouldThrowErrorSync( () => _.anarray[ rname ]( [ 1,2 ],[ 3,4 ],1 ) );
-    test.shouldThrowErrorSync( () => _.anarray[ rname ]( [ 1,2 ],[ 3,4 ],undefined ) );
-    test.shouldThrowErrorSync( () => _.anarray[ rname ]( [ 1,2 ],[ 3,4 ],'1' ) );
+    test.shouldThrowErrorSync( () => _.avector[ rname ]() );
+    test.shouldThrowErrorSync( () => _.avector[ rname ]( [ 1,2 ] ) );
+    test.shouldThrowErrorSync( () => _.avector[ rname ]( [ 1,2 ],[ 3 ] ) );
+    test.shouldThrowErrorSync( () => _.avector[ rname ]( [ 1,2 ],[ 3,4 ],[ 5 ] ) );
+    test.shouldThrowErrorSync( () => _.avector[ rname ]( [ 1,2 ],[ 3,4 ],1 ) );
+    test.shouldThrowErrorSync( () => _.avector[ rname ]( [ 1,2 ],[ 3,4 ],undefined ) );
+    test.shouldThrowErrorSync( () => _.avector[ rname ]( [ 1,2 ],[ 3,4 ],'1' ) );
 
     test.shouldThrowErrorSync( () => _.vector[ rname ]() );
     test.shouldThrowErrorSync( () => _.vector[ rname ]( vec([ 1,2 ]) ) );
@@ -791,7 +791,7 @@ function atomNotParallel( test )
   var dst = [ 1,2,3 ];
   var src1 = [ 3,2,1 ];
   var src2 = [ 10,20,30 ];
-  _.anarray.addScaled( dst,src1,src2 );
+  _.avector.addScaled( dst,src1,src2 );
   test.identical( dst,expected );
 
   var expected = vec([ 31,42,33 ]);
@@ -807,7 +807,7 @@ function atomNotParallel( test )
   var dst = [ 1,2,3 ];
   var src1 = [ 3,2,1 ];
   var src2 = [ 10,20,30 ];
-  _.anarray.subScaled( dst,src1,src2 );
+  _.avector.subScaled( dst,src1,src2 );
   test.identical( dst,expected );
 
   var expected = vec([ -29,-38,-27 ]);
@@ -823,7 +823,7 @@ function atomNotParallel( test )
   var dst = [ 1,2,3 ];
   var src1 = [ 3,2,1 ];
   var src2 = [ 10,20,30 ];
-  _.anarray.mulScaled( dst,src1,src2 );
+  _.avector.mulScaled( dst,src1,src2 );
   test.identical( dst,expected );
 
   var expected = vec([ 30,80,90 ]);
@@ -839,7 +839,7 @@ function atomNotParallel( test )
   var dst = [ 1,2,3 ];
   var src1 = [ 3,2,1 ];
   var src2 = [ 10,20,30 ];
-  _.anarray.divScaled( dst,src1,src2 );
+  _.avector.divScaled( dst,src1,src2 );
   test.identical( dst,expected );
 
   var expected = vec([ 1/30,2/40,3/30 ]);
@@ -855,7 +855,7 @@ function atomNotParallel( test )
   var dst = [ 10,20,10,30,30,15 ];
   var src1 = [ 30,20,20,20,10,10 ];
   var src2 = [ 40,20,20,20,15,15 ];
-  _.anarray.clamp( dst,dst,src1,src2 );
+  _.avector.clamp( dst,dst,src1,src2 );
   test.identical( dst,expected );
 
   var expected = vec([ 30,20,20,20,15,15 ]);
@@ -872,10 +872,10 @@ function atomNotParallel( test )
   var dst = [ 1,2,3 ];
   var src1 = [ 3,2,1 ];
   var src2 = 10;
-  _.anarray.addScaled( dst,src1,src2 );
+  _.avector.addScaled( dst,src1,src2 );
   test.identical( dst,expected );
   var dst = [ 1,2,3 ];
-  _.anarray.addScaled( dst,src2,src1 );
+  _.avector.addScaled( dst,src2,src1 );
   test.identical( dst,expected );
 
   var expected = vec([ 31,22,13 ]);
@@ -894,10 +894,10 @@ function atomNotParallel( test )
   var dst = [ 1,2,3 ];
   var src1 = [ 3,2,1 ];
   var src2 = 10;
-  _.anarray.subScaled( dst,src1,src2 );
+  _.avector.subScaled( dst,src1,src2 );
   test.identical( dst,expected );
   var dst = [ 1,2,3 ];
-  _.anarray.subScaled( dst,src2,src1 );
+  _.avector.subScaled( dst,src2,src1 );
   test.identical( dst,expected );
 
   var expected = vec([ -29,-18,-7 ]);
@@ -916,10 +916,10 @@ function atomNotParallel( test )
   var dst = [ 1,2,3 ];
   var src1 = [ 3,2,1 ];
   var src2 = 10;
-  _.anarray.mulScaled( dst,src1,src2 );
+  _.avector.mulScaled( dst,src1,src2 );
   test.identical( dst,expected );
   var dst = [ 1,2,3 ];
-  _.anarray.mulScaled( dst,src2,src1 );
+  _.avector.mulScaled( dst,src2,src1 );
   test.identical( dst,expected );
 
   var expected = vec([ 30,40,30 ]);
@@ -938,10 +938,10 @@ function atomNotParallel( test )
   var dst = [ 1,2,3 ];
   var src1 = [ 3,2,1 ];
   var src2 = 10;
-  _.anarray.divScaled( dst,src1,src2 );
+  _.avector.divScaled( dst,src1,src2 );
   test.identical( dst,expected );
   var dst = [ 1,2,3 ];
-  _.anarray.divScaled( dst,src2,src1 );
+  _.avector.divScaled( dst,src2,src1 );
   test.identical( dst,expected );
 
   var expected = vec([ 1/30,2/20,3/10 ]);
@@ -960,7 +960,7 @@ function atomNotParallel( test )
   var dst = [ 10,20,10,20,20,15 ];
   var src1 = [ 20,20,20,20,10,10 ];
   var src2 = 20;
-  _.anarray.clamp( dst,dst,src1,src2 );
+  _.avector.clamp( dst,dst,src1,src2 );
   test.identical( dst,expected );
 
   var expected = vec([ 20,20,20,20,20,15 ]);
@@ -974,7 +974,7 @@ function atomNotParallel( test )
   var dst = [ 10,20,10,30,30,15 ];
   var src1 = 15;
   var src2 = [ 40,20,20,20,15,15 ];
-  _.anarray.clamp( dst,dst,src1,src2 );
+  _.avector.clamp( dst,dst,src1,src2 );
   test.identical( dst,expected );
 
   var expected = vec([ 15,20,15,20,15,15 ]);
@@ -988,16 +988,17 @@ function atomNotParallel( test )
 
   function checkEmpty( rname )
   {
+    var op = _.vector[ rname ].operation;
 
     var dst = [];
-    var args = _.dup( [],_.vector[ rname ].takingArguments[ 0 ]-1 );
+    var args = _.dup( [],op.takingArguments[ 0 ]-1 );
     args.unshift( dst );
-    var got = _.anarray[ rname ].apply( _,args );
+    var got = _.avector[ rname ].apply( _,args );
     test.shouldBe( got === dst );
     test.identical( got , [] );
 
     var dst = vec([]);
-    var args = _.dup( vec([]),_.vector[ rname ].takingArguments[ 0 ]-1 );
+    var args = _.dup( vec([]),op.takingArguments[ 0 ]-1 );
     args.unshift( dst );
     var got = _.vector[ rname ].apply( _,args );
     test.shouldBe( got === dst );
@@ -1019,14 +1020,14 @@ function atomNotParallel( test )
   function shouldThrowError( rname )
   {
 
-    test.shouldThrowErrorSync( () => _.anarray[ rname ]() );
-    test.shouldThrowErrorSync( () => _.anarray[ rname ]( [ 1,2 ] ) );
-    test.shouldThrowErrorSync( () => _.anarray[ rname ]( [ 1,2 ],[ 3 ] ) );
-    test.shouldThrowErrorSync( () => _.anarray[ rname ]( [ 1,2 ],[ 3,4 ],[ 5 ] ) );
-    test.shouldThrowErrorSync( () => _.anarray[ rname ]( [ 1,2 ],[ 3 ],[ 5,5 ] ) );
-    test.shouldThrowErrorSync( () => _.anarray[ rname ]( 1,[ 3,3 ],[ 5,5 ] ) );
-    test.shouldThrowErrorSync( () => _.anarray[ rname ]( [ 1,2 ],[ 3,4 ],undefined ) );
-    test.shouldThrowErrorSync( () => _.anarray[ rname ]( [ 1,2 ],[ 3,4 ],'1' ) );
+    test.shouldThrowErrorSync( () => _.avector[ rname ]() );
+    test.shouldThrowErrorSync( () => _.avector[ rname ]( [ 1,2 ] ) );
+    test.shouldThrowErrorSync( () => _.avector[ rname ]( [ 1,2 ],[ 3 ] ) );
+    test.shouldThrowErrorSync( () => _.avector[ rname ]( [ 1,2 ],[ 3,4 ],[ 5 ] ) );
+    test.shouldThrowErrorSync( () => _.avector[ rname ]( [ 1,2 ],[ 3 ],[ 5,5 ] ) );
+    test.shouldThrowErrorSync( () => _.avector[ rname ]( 1,[ 3,3 ],[ 5,5 ] ) );
+    test.shouldThrowErrorSync( () => _.avector[ rname ]( [ 1,2 ],[ 3,4 ],undefined ) );
+    test.shouldThrowErrorSync( () => _.avector[ rname ]( [ 1,2 ],[ 3,4 ],'1' ) );
 
     test.shouldThrowErrorSync( () => _.vector[ rname ]() );
     test.shouldThrowErrorSync( () => _.vector[ rname ]( vec([ 1,2 ]) ) );
@@ -1045,94 +1046,6 @@ function atomNotParallel( test )
   shouldThrowError( 'subScaled' );
   shouldThrowError( 'clamp' );
 
-}
-
-//
-
-function bsphereFromBbox( test )
-{
-
-  test.description = 'simplest'; //
-
-  var expected = [ 0.5,0.5,0.5,sqrt( 0.5 ) ];
-  var bsphere = [ 0,0,0,0 ];
-  var bbox = [ 0,0,0,1,1,1 ];
-
-  _.anarray.bsphereFromBbox( bsphere,bbox );
-  test.equivalent( bsphere,expected );
-
-  var expected = vec( expected );
-  var bsphere = vec([ 0,0,0,0 ]);
-  var bbox = vec( bbox );
-
-  _.vector.bsphereFromBbox( bsphere,bbox );
-  test.equivalent( bsphere,expected );
-
-  test.description = 'same sizes, different position'; //
-
-  var expected = [ -2.5,0.5,5.5,sqrt( 0.5 ) ];
-  var bsphere = [ 0,0,0,0 ];
-  var bbox = [ -3,0,5,-2,1,6 ];
-
-  _.anarray.bsphereFromBbox( bsphere,bbox );
-  test.equivalent( bsphere,expected );
-
-  var expected = vec( expected );
-  var bsphere = vec([ 0,0,0,0 ]);
-  var bbox = vec( bbox );
-
-  _.vector.bsphereFromBbox( bsphere,bbox );
-  test.equivalent( bsphere,expected );
-
-  test.description = 'different sizes, different position'; //
-
-  var expected = [ -2,0.5,7,sqrt( 5 ) ];
-  var bsphere = [ 0,0,0,0 ];
-  var bbox = [ -3,0,5,-1,1,9 ];
-
-  _.anarray.bsphereFromBbox( bsphere,bbox );
-  test.equivalent( bsphere,expected );
-
-  var expected = vec( expected );
-  var bsphere = vec([ 0,0,0,0 ]);
-  var bbox = vec( bbox );
-
-  _.vector.bsphereFromBbox( bsphere,bbox )
-  test.equivalent( bsphere,expected );
-
-  test.description = 'bad arguments'; //
-
-  if( !Config.debug )
-  return;
-
-  function shouldThrowError( rname )
-  {
-
-    test.shouldThrowErrorSync( () => _.anarray[ rname ]() );
-    test.shouldThrowErrorSync( () => _.anarray[ rname ]( [ 1,2 ] ) );
-    test.shouldThrowErrorSync( () => _.anarray[ rname ]( [ 1,2 ],[ 3 ] ) );
-    test.shouldThrowErrorSync( () => _.anarray[ rname ]( [ 1,2 ],[ 3,4 ],[ 5 ] ) );
-    test.shouldThrowErrorSync( () => _.anarray[ rname ]( [ 1,2 ],[ 3,4 ],1 ) );
-    test.shouldThrowErrorSync( () => _.anarray[ rname ]( [ 1,2 ],[ 3,4 ],undefined ) );
-    test.shouldThrowErrorSync( () => _.anarray[ rname ]( [ 1,2 ],[ 3,4 ],'1' ) );
-    test.shouldThrowErrorSync( () => _.anarray[ rname ]( [ 1,2,3,4 ],[ 1,2,3,4,5 ] ) );
-    test.shouldThrowErrorSync( () => _.anarray[ rname ]( [ 1,2,3 ],[ 1,2,3,4,5,6 ] ) );
-
-    test.shouldThrowErrorSync( () => _.vector[ rname ]() );
-    test.shouldThrowErrorSync( () => _.vector[ rname ]( vec([ 1,2 ]) ) );
-    test.shouldThrowErrorSync( () => _.vector[ rname ]( vec([ 1,2 ]),vec([ 3 ]) ) );
-    test.shouldThrowErrorSync( () => _.vector[ rname ]( vec([ 1,2 ]),vec([ 3,4 ]),vec([ 5 ]) ) );
-    test.shouldThrowErrorSync( () => _.vector[ rname ]( vec([ 1,2 ]),vec([ 3,4 ]),1 ) );
-    test.shouldThrowErrorSync( () => _.vector[ rname ]( vec([ 1,2 ]),vec([ 3,4 ]),undefined ) );
-    test.shouldThrowErrorSync( () => _.vector[ rname ]( vec([ 1,2 ]),vec([ 3,4 ]),'1' ) );
-    test.shouldThrowErrorSync( () => _.vector[ rname ]( vec([ 1,2,3,4 ]),vec([ 1,2,3,4,5 ]) ) );
-    test.shouldThrowErrorSync( () => _.vector[ rname ]( vec([ 1,2,3 ]),vec([ 1,2,3,4,5,6 ]) ) );
-
-  }
-
-  shouldThrowError( 'bsphereFromBbox' );
-
-  debugger;
 }
 
 //
@@ -1160,7 +1073,7 @@ function swap( test )
   var v1Expected = [ 10,20,30 ];
   var v2Expected = [ 1,2,3 ];
 
-  var r = anarray.swapVectors( v1,v2 );
+  var r = avector.swapVectors( v1,v2 );
 
   test.shouldBe( r === undefined );
   test.identical( v1,v1Expected );
@@ -1173,7 +1086,7 @@ function swap( test )
   var v1Expected = [];
   var v2Expected = [];
 
-  var r = anarray.swapVectors( v1,v2 );
+  var r = avector.swapVectors( v1,v2 );
 
   test.shouldBe( r === undefined );
   test.identical( v1,v1Expected );
@@ -1192,7 +1105,7 @@ function swap( test )
 
   var v1 = [ 1,2,3 ];
   var v1Expected = [ 3,2,1 ];
-  var r = anarray.swapAtoms( v1,0,2 );
+  var r = avector.swapAtoms( v1,0,2 );
 
   test.shouldBe( r === v1 );
   test.identical( v1,v1Expected );
@@ -1201,7 +1114,7 @@ function swap( test )
 
   var v1 = [ 1 ];
   var v1Expected = [ 1 ];
-  var r = anarray.swapAtoms( v1,0,0 );
+  var r = avector.swapAtoms( v1,0,0 );
 
   test.shouldBe( r === v1 );
   test.identical( v1,v1Expected );
@@ -1235,16 +1148,26 @@ function polynomApply( test )
 
   test.description = 'simple'; //
 
-  debugger;
-
   var expected = 7;
-  var got = _.anarray.polynomApply( [ 1,1,1 ],2 );
+  var got = _.avector.polynomApply( [ 1,1,1 ],2 );
   test.identical( got,expected );
 
   test.description = 'simple'; //
 
-  var expected = 20;
-  var got = _.anarray.polynomApply( [ 0,1,2 ],4 );
+  var expected = 36;
+  var got = _.avector.polynomApply( [ 0,1,2 ],4 );
+  test.identical( got,expected );
+
+  test.description = 'simple'; //
+
+  var expected = 6;
+  var got = _.avector.polynomApply( [ 2,1,0 ],4 );
+  test.identical( got,expected );
+
+  test.description = 'simple'; //
+
+  var expected = 262;
+  var got = _.avector.polynomApply( [ 2,1,0,4 ],4 );
   test.identical( got,expected );
 
 }
@@ -1258,26 +1181,24 @@ var Self =
 
   name : 'VectorTest',
   verbosity : 7,
-  debug : 1,
+  // debug : 1,
 
   tests :
   {
 
-    // vectorIs : vectorIs,
-    // to : to,
-    //
-    // sort : sort,
-    // dot : dot,
-    // subarray : subarray,
-    // reduceToMinmax : reduceToMinmax,
-    //
-    // atomParrallelWithScalar : atomParrallelWithScalar,
-    // atomParrallelOnlyVectors : atomParrallelOnlyVectors,
-    // atomNotParallel : atomNotParallel,
-    //
-    // bsphereFromBbox : bsphereFromBbox,
-    // swap : swap,
+    vectorIs : vectorIs,
+    to : to,
 
+    sort : sort,
+    dot : dot,
+    subarray : subarray,
+    reduceToMinmax : reduceToMinmax,
+
+    atomParrallelWithScalar : atomParrallelWithScalar,
+    atomParrallelOnlyVectors : atomParrallelOnlyVectors,
+    atomNotParallel : atomNotParallel,
+
+    swap : swap,
     polynomApply : polynomApply,
 
   },
@@ -1287,7 +1208,7 @@ var Self =
 //
 
 Self = wTestSuite( Self );
-if( typeof module !== 'undefined' && !module.parent )
+// if( typeof module !== 'undefined' && !module.parent )
 _.Testing.test( Self.name );
 
 } )( );

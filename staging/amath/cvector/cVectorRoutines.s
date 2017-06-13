@@ -16,12 +16,6 @@ var _pow = Math.pow;
 var sqrt = Math.sqrt;
 var abs = Math.abs;
 
-if( _.EPS === undefined )
-_.EPS = 1e-5;
-
-if( _.EPS2 === undefined )
-_.EPS2 = 1e-10;
-
 var EPS = _.EPS;
 var EPS2 = _.EPS2;
 var sqrt2 = sqrt( 2 );
@@ -61,7 +55,7 @@ var OperationDescriptor = _.like()
 .end
 
 // --
-// returningSelfTakingSingleRowAndSomething
+// basic
 // --
 
 function set( dst )
@@ -99,15 +93,16 @@ op.returningSelf = true;
 op.returningNew = false;
 op.modifying = true;
 
-// --
-// two : self
-// --
+//
 
 function assign( dst,src )
 {
   var length = dst.length;
+
   _assert( dst && src,'vector :','expects ( src ) and ( dst )' );
   _assert( dst.length === src.length,'vector :','src and dst should have same length' );
+  _assert( _.vectorIs( dst ) );
+  _assert( _.vectorIs( src ) );
 
   for( var s = 0 ; s < length ; s++ )
   {
@@ -128,19 +123,17 @@ op.returningNew = false;
 op.modifying = true;
 op.special = true;
 
-// --
-// two : self
-// --
+//
 
 function clone( src )
 {
   var length = src.length;
-  var dst = _.vector.fromArray( new src._vectorBuffer.constructor( length ) );
+  var dst = this.makeSimilar( src );
+
+  _.assert( arguments.length === 1 )
 
   for( var s = 0 ; s < length ; s++ )
-  {
-    dst.eSet( s,src.eGet( s ) );
-  }
+  dst.eSet( s,src.eGet( s ) );
 
   return dst;
 }
@@ -158,14 +151,39 @@ op.special = true;
 
 //
 
+function makeSimilar( src,length )
+{
+  if( length === undefined )
+  length = src.length;
+
+  _.assert( arguments.length === 1 || arguments.length === 2 );
+
+  var dst = _.vector.fromArray( new src._vectorBuffer.constructor( length ) );
+
+  return dst;
+}
+
+var op = makeSimilar.operation = Object.create( null );
+op.atomWise = false;
+op.commutative = false;
+op.takingArguments = [ 1,2 ];
+op.takingVectors = 1;
+op.takingVectorsOnly = false;
+op.returningSelf = false;
+op.returningNew = true;
+op.modifying = false;
+op.special = true;
+
+//
+
 function slice( src,first,last )
 {
   var length = src.length;
   var first = first || 0;
   var last = _.numberIs( last ) ? last : length;
 
-  _.assert( arguments.length === 3 );
-  _.assert( src._vectorBuffer,'vector.slice :','expects vector as argument' );
+  _.assert( 1 <= arguments.length && arguments.length <= 3 );
+  _.assert( src._vectorBuffer,'expects vector as argument' );
 
   var result;
 
@@ -249,13 +267,16 @@ op.modifying = false;
 
 //
 
-function _toArray( src )
+function toArray( src )
 {
   var result;
   var length = src.length;
 
-  _assert( _.vectorIs( src ),'expects vector as a single argument' );
+  _assert( _.vectorIs( src ) || _.arrayLike( src ), 'expects vector as a single argument' );
   _assert( arguments.length === 1 );
+
+  if( _.arrayLike( src ) )
+  return src;
 
   if( src.stride !== 1 || src.offset !== 0 || src.length !== src._vectorBuffer.length )
   {
@@ -271,11 +292,11 @@ function _toArray( src )
   return result;
 }
 
-var op = _toArray.operation = Object.create( null );
+var op = toArray.operation = Object.create( null );
 op.atomWise = false;
 op.commutative = false;
 op.takingArguments = 1;
-op.takingVectors = 1;
+op.takingVectors = [ 0,1 ];
 op.takingVectorsOnly = false;
 op.returningSelf = false;
 op.returningNew = false;
@@ -482,87 +503,86 @@ op.returningSelf = true;
 op.returningNew = false;
 op.modifying = true;
 
+// //
 //
-
-function boundingSphereExpend( dst )
-{
-  var length = dst.length;
-  var dstPosition = _.vector.fromSubArray( dst,0,dst.length-1 );
-  var radius = dst.eGet( dst.length-1 );
-  var radiusSqr = radius*radius;
-
-  for( var a = 1 ; a < arguments.length ; a++ )
-  {
-
-    var src = arguments[ a ];
-    _assert( dst.length === src.length || dstPosition.length === src.length,'vector.boundingSphereExpend :','wrong length of vector' );
-
-    var srcPosition = _.vector.fromSubArray( src,0,length-1 );
-    var distanceSqr = _.vector.distanceSqr( dstPosition,srcPosition );
-
-    if( distanceSqr > radiusSqr )
-    {
-
-      var distance = sqrt( distanceSqr );
-      var offset = ( distance - radius ) / 2;
-
-      mix.call( this,dstPosition,srcPosition,offset / distance );
-
-      radius += offset;
-      radiusSqr = radius*radius;
-
-    }
-
-  }
-
-  dst.eSet( length-1,radius );
-
-  return dst;
-}
-
-var op = boundingSphereExpend.operation = Object.create( null );
-op.atomWise = false;
-op.commutative = false;
-op.takingArguments = [ 2,Infinity ];
-op.takingVectors = [ 2,Infinity ];
-op.takingVectorsOnly = true;
-op.returningSelf = true;
-op.returningNew = false;
-op.modifying = true;
-
+// function boundingSphereExpend( dst )
+// {
+//   var length = dst.length;
+//   var dstPosition = _.vector.fromSubArray( dst,0,dst.length-1 );
+//   var radius = dst.eGet( dst.length-1 );
+//   var radiusSqr = radius*radius;
 //
-
-function bsphereFromBbox( bsphere,bbox )
-{
-
-  _assert( bsphere.length === 4 && bbox.length === 6,'quaternionApply :','expects vector and quaternion as arguments' );
-
-  var center = this.subarray( bsphere,0,3 );
-  var bboxMin = this.subarray( bbox,0,3 );
-  var bboxMax = this.subarray( bbox,3,6 );
-
-  this.assign( center,bboxMin );
-  this.addVectors( center,bboxMax );
-  this.divScalar( center,2 );
-
-  var sizes = this.subVectors( clone( bboxMax ),bboxMin );
-  this.sort( sizes );
-
-  debugger; throw _.err( 'not tested' );
-  bsphere.eSet( 3,this.mag( this.subarray( sizes,1,3 ) ) / 2 );
-
-  return bsphere;
-}
-
-var op = bsphereFromBbox.operation = Object.create( null );
-op.atomWise = false;
-op.commutative = false;
-op.takingArguments = 2;
-op.takingVectors = 2;
-op.takingVectorsOnly = true;
-op.returningSelf = true;
-op.returningNew = false;
-op.modifying = true;
+//   for( var a = 1 ; a < arguments.length ; a++ )
+//   {
+//
+//     var src = arguments[ a ];
+//     _assert( dst.length === src.length || dstPosition.length === src.length,'wrong length of vector' );
+//
+//     var srcPosition = _.vector.fromSubArray( src,0,length-1 );
+//     var distanceSqr = _.vector.distanceSqr( dstPosition,srcPosition );
+//
+//     if( distanceSqr > radiusSqr )
+//     {
+//
+//       var distance = sqrt( distanceSqr );
+//       var offset = ( distance - radius ) / 2;
+//
+//       mix.call( this,dstPosition,srcPosition,offset / distance );
+//
+//       radius += offset;
+//       radiusSqr = radius*radius;
+//
+//     }
+//
+//   }
+//
+//   dst.eSet( length-1,radius );
+//
+//   return dst;
+// }
+//
+// var op = boundingSphereExpend.operation = Object.create( null );
+// op.atomWise = false;
+// op.commutative = false;
+// op.takingArguments = [ 2,Infinity ];
+// op.takingVectors = [ 2,Infinity ];
+// op.takingVectorsOnly = true;
+// op.returningSelf = true;
+// op.returningNew = false;
+// op.modifying = true;
+//
+// //
+//
+// function bsphereFromBbox( bsphere,bbox )
+// {
+//
+//   _assert( bsphere.length === 4 && bbox.length === 6,'quaternionApply :','expects vector and quaternion as arguments' );
+//
+//   var center = this.subarray( bsphere,0,3 );
+//   var bboxMin = this.subarray( bbox,0,3 );
+//   var bboxMax = this.subarray( bbox,3,6 );
+//
+//   this.assign( center,bboxMin );
+//   this.addVectors( center,bboxMax );
+//   this.divScalar( center,2 );
+//
+//   var sizes = this.subVectors( clone( bboxMax ),bboxMin );
+//   this.sort( sizes );
+//
+//   bsphere.eSet( 3,this.subarray( sizes,1,3 ).mag() / 2 );
+//
+//   return bsphere;
+// }
+//
+// var op = bsphereFromBbox.operation = Object.create( null );
+// op.atomWise = false;
+// op.commutative = false;
+// op.takingArguments = 2;
+// op.takingVectors = 2;
+// op.takingVectorsOnly = true;
+// op.returningSelf = true;
+// op.returningNew = false;
+// op.modifying = true;
 
 //
 
@@ -794,34 +814,10 @@ op.modifying = true;
 
 function matrixApply( dst,srcMatrix )
 {
-  var matrixLength = srcMatrix.length;
-  var dstLength = dst.length;
-  var result = new Array( dstLength );
-
+  _.assert( arguments.length === 2 );
+  _.assert( _.spaceIs( srcMatrix ) );
   debugger;
-  throw _.err( 'not tested' );
-
-  _assert( dstLength === srcMatrix.ncol ); debugger;
-
-  for( var i = 0 ; i < matrixLength ; i++ )
-  {
-
-    var column = srcMatrix.rowVectorGet( i );
-
-    result[ i ] = 0;
-    for( var j = 0 ; j < dstLength ; j++ )
-    {
-      result[ i ] += dst.eGet( j ) * column.eGet( j );
-    }
-
-  }
-
-  for( var j = 0 ; j < dstLength ; j++ )
-  {
-    dst.eSet( j,result[ j ] );
-  }
-
-  return dst;
+  return _.space.mul( dst,[ srcMatrix,dst ] );
 }
 
 var op = matrixApply.operation = Object.create( null );
@@ -837,37 +833,14 @@ op.modifying = true;
 
 //
 
-function matrixHeterogenousApply( dst,srcMatrix )
+function matrixHomogenousApply( dst,srcMatrix )
 {
-  var matrixLength = srcMatrix.length;
-  var dstLength = dst.length;
-  var result = new Array( srcMatrix.atomsPerElement );
-
-  _assert( dstLength === srcMatrix.ncol-1 ); debugger;
-
-  for( var i = 0 ; i < matrixLength ; i++ )
-  {
-
-    var column = srcMatrix.rowVectorGet( i );
-
-    result[ i ] = 0;
-    for( var j = 0 ; j < dstLength ; j++ )
-    {
-      result[ i ] += dst.eGet( j ) * column.eGet( j );
-    }
-    result[ i ] += column.eGet( j );
-
-  }
-
-  for( var j = 0 ; j < dstLength ; j++ )
-  {
-    dst.eSet( j,result[ j ] / result[ result.length-1 ] );
-  }
-
-  return dst;
+  _.assert( arguments.length === 2 );
+  _.assert( _.spaceIs( srcMatrix ) );
+  return srcMatrix.matrixHomogenousApply( dst );
 }
 
-var op = matrixHeterogenousApply.operation = Object.create( null );
+var op = matrixHomogenousApply.operation = Object.create( null );
 op.atomWise = false;
 op.commutative = false;
 op.takingArguments = 2;
@@ -881,17 +854,9 @@ op.modifying = true;
 
 function matrixDirectionsApply( v,m )
 {
-
   _.assrt( arguments.length === 2 );
-  _.assrt( v.length < m.dims[ 1 ] );
-
-  debugger;
-  throw _.err( 'not tested' );
-
-  _.Space.mul( v,[ m.subspace([ [ 0,v.length ],[ 0,v.length ] ]),v ] );
-  this.normalize( v );
-
-  return this;
+  m.matrixDirectionsApply( v );
+  return v;
 }
 
 var op = matrixDirectionsApply.operation = Object.create( null );
@@ -958,6 +923,46 @@ op.takingVectorsOnly = false;
 op.returningSelf = true;
 op.returningNew = false;
 op.modifying = true;
+
+//
+
+function mag( v )
+{
+
+  _assert( arguments.length === 1 );
+
+  return this.reduceToMag( v );
+}
+
+var op = mag.operation = Object.create( null );
+op.atomWise = true;
+op.commutative = true;
+op.takingArguments = 1;
+op.takingVectors = 1;
+op.takingVectorsOnly = true;
+op.returningSelf = false;
+op.returningNew = false;
+op.modifying = false;
+
+//
+
+function magSqr( v )
+{
+
+  _assert( arguments.length === 1 );
+
+  return this.reduceToMagSqr( v );
+}
+
+var op = magSqr.operation = Object.create( null );
+op.atomWise = true;
+op.commutative = true;
+op.takingArguments = 1;
+op.takingVectors = 1;
+op.takingVectorsOnly = true;
+op.returningSelf = false;
+op.returningNew = false;
+op.modifying = false;
 
 // --
 // atom-wise, modifying, taking single vector : self
@@ -2028,7 +2033,7 @@ function __operationReduceToScalar_functor( operation )
 
     numberOfArguments = _.clamp( numberOfArguments,takingVectors );
 
-    var op = handleBegin({ args : arguments, filter : filter });
+    var op = handleBegin({ args : arguments , filter : filter });
 
     for( var a = 0 ; a < numberOfArguments ; a++ )
     {
@@ -2127,27 +2132,30 @@ _operationReduceToScalar_functor.defaults.__proto__ = __operationReduceToScalar_
 
 //
 
-// var polynomApply = _operationReduceToScalar_functor
-// ({
-//   onAtom : function( o )
-//   {
-//     debugger;
-//     o.result += _pow( o.element,o.key );
-//   },
-//   onBegin : function( o )
-//   {
-//     debugger;
-//     o.result = 0;
-//   },
-//   onEnd : function( o )
-//   {
-//   },
-//
-//   takingArguments : [ 2,2 ],
-//   takingVectors : [ 1,1 ],
-//   takingVectorsOnly : false,
-//
-// });
+var polynomApply = _operationReduceToScalar_functor
+({
+
+  onAtom : function( o )
+  {
+    debugger;
+    var x = o.args[ 1 ];
+    o.result += o.element * _pow( x,o.key );
+  },
+  onBegin : function( o )
+  {
+    debugger;
+    o.result = 0;
+  },
+  onEnd : function( o )
+  {
+    debugger;
+  },
+
+  takingArguments : [ 2,2 ],
+  takingVectors : [ 1,1 ],
+  takingVectorsOnly : false,
+
+});
 
 //
 
@@ -2777,7 +2785,7 @@ function equalAre( src1,src2,iterator )
 }
 
 var op = equalAre.operation = Object.create( null );
-op.takingArguments = 3;
+op.takingArguments = [ 2,3 ];
 op.takingVectors = 2;
 op.takingVectorsOnly = false;
 op.returningSelf = false;
@@ -2796,7 +2804,7 @@ function identicalAre( src1,src2,iterator )
 }
 
 var op = identicalAre.operation = Object.create( null );
-op.takingArguments = 3;
+op.takingArguments = [ 2,3 ];
 op.takingVectors = 2;
 op.takingVectorsOnly = false;
 op.returningSelf = false;
@@ -2815,7 +2823,7 @@ function equivalentAre( src1,src2,iterator )
 }
 
 var op = equivalentAre.operation = Object.create( null );
-op.takingArguments = 3;
+op.takingArguments = [ 2,3 ];
 op.takingVectors = 2;
 op.takingVectorsOnly = false;
 op.returningSelf = false;
@@ -2895,18 +2903,19 @@ declareAomWiseNotParallelRoutines();
 var routineMathematical =
 {
 
-  // etc
+  // basic
 
   set : set,
 
   assign : assign,
   /*copy : assign,*/
   clone : clone,
+  makeSimilar : makeSimilar,
 
   slice : slice,
   subarray : subarray,
 
-  _toArray : _toArray,
+  toArray : toArray,
   _toStr : _toStr,
 
   gather : gather,
@@ -2917,8 +2926,8 @@ var routineMathematical =
   sort : sort,
   randomInRadius : randomInRadius,
 
-  boundingSphereExpend : boundingSphereExpend,
-  bsphereFromBbox : bsphereFromBbox,
+  // boundingSphereExpend : boundingSphereExpend,
+  // bsphereFromBbox : bsphereFromBbox,
 
   cross : cross,
   crossWithPoints : crossWithPoints,
@@ -2931,11 +2940,14 @@ var routineMathematical =
   reflect : reflect,
 
   matrixApply : matrixApply,
-  matrixHeterogenousApply : matrixHeterogenousApply,
+  matrixHomogenousApply : matrixHomogenousApply,
   matrixDirectionsApply : matrixDirectionsApply,
 
   swapVectors : swapVectors,
   swapAtoms : swapAtoms,
+
+  mag : mag,
+  magSqr : magSqr,
 
 
   // atom-wise, modifying, taking single vector : self
@@ -3028,8 +3040,8 @@ var routineMathematical =
 
   /* _operationReduceToScalar_functor */
 
-  // polynomApply : polynomApply.trivial,
-  // polynomApplyFiltering : polynomApply.filtering,
+  polynomApply : polynomApply.trivial,
+  polynomApplyFiltering : polynomApply.filtering,
 
   reduceToAverage : reduceToAverage.trivial,
   reduceToAverageFiltering : reduceToAverage.filtering,
@@ -3045,11 +3057,11 @@ var routineMathematical =
 
   reduceToMag : reduceToMag.trivial,
   reduceToMagFiltering : reduceToMag.filtering,
-  mag : reduceToMag.trivial,
+  // mag : reduceToMag.trivial,
 
   reduceToMagSqr : reduceToMagSqr.trivial,
   reduceToMagSqrFiltering : reduceToMagSqr.filtering,
-  magSqr : reduceToMagSqr.trivial,
+  // magSqr : reduceToMagSqr.trivial,
 
 
   // reduce to extremal
