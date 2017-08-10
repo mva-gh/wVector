@@ -33,7 +33,7 @@ var vec = _.vector.fromArray;
 var avector = _.avector;
 var sqrt = _.sqrt;
 
-var Parent = wTools.Testing;
+var Parent = wTools.Tester;
 
 _.assert( sqrt );
 
@@ -87,7 +87,6 @@ function vectorIs( test )
 
 function to( test )
 {
-  debugger;
 
   if( Space )
   {
@@ -297,7 +296,7 @@ function subarray( test )
 
 //
 
-function reduceToMinmax( test )
+function distributionRangeSummary( test )
 {
 
   var empty = [];
@@ -305,16 +304,17 @@ function reduceToMinmax( test )
   var b = [ 55,22,33,99,2,22,3,33,4,99,5,44 ];
   var filter = ( e,o ) => !(e % 2);
 
-  test.description = 'reduceToMinmax single element'; //
+  test.description = 'distributionRangeSummary single element'; //
 
   var ar = [ 1 ];
   var expected =
   {
     min : { value : 1, index : 0, container : vec( ar ) },
     max : { value : 1, index : 0, container : vec( ar ) },
+    median : 1,
   };
 
-  var got = _.avector.reduceToMinmax( ar );
+  var got = _.avector.distributionRangeSummary( ar );
   test.identical( got,expected );
 
   test.description = 'reduceToMax single element'; //
@@ -335,9 +335,10 @@ function reduceToMinmax( test )
   {
     min : { value : 1, index : 0, container : vec( a ) },
     max : { value : 5, index : 4, container : vec( a ) },
+    median : 3,
   };
 
-  var got = _.avector.reduceToMinmax( a );
+  var got = _.avector.distributionRangeSummary( a );
   test.identical( got,expected );
 
   test.description = 'simplest case with filtering'; //
@@ -346,9 +347,10 @@ function reduceToMinmax( test )
   {
     min : { value : 2, index : 1, container : vec( a ) },
     max : { value : 4, index : 3, container : vec( a ) },
+    median : 3,
   };
 
-  var got = _.avector.reduceToMinmaxFiltering( a,filter );
+  var got = _.avector.distributionRangeSummaryFiltering( a,filter );
   test.identical( got,expected );
 
   test.description = 'several vectors'; //
@@ -357,9 +359,10 @@ function reduceToMinmax( test )
   {
     min : { value : 1, index : 0, container : vec( a ) },
     max : { value : 99, index : 3, container : vec( b ) },
+    median : 50,
   };
 
-  var got = _.avector.reduceToMinmax( a,b );
+  var got = _.avector.distributionRangeSummary( a,b );
   test.identical( got,expected );
 
   test.description = 'several vectors with filtering'; //
@@ -368,9 +371,10 @@ function reduceToMinmax( test )
   {
     min : { value : 2, index : 1, container : vec( a ) },
     max : { value : 44, index : 11, container : vec( b ) },
+    median : 23,
   };
 
-  var got = _.avector.reduceToMinmaxFiltering( a,b,filter );
+  var got = _.avector.distributionRangeSummaryFiltering( a,b,filter );
   test.identical( got,expected );
 
   test.description = 'empty array'; //
@@ -379,8 +383,9 @@ function reduceToMinmax( test )
   {
     min : { value : NaN, index : -1, container : null },
     max : { value : NaN, index : -1, container : null },
+    median : NaN,
   };
-  var got = _.avector.reduceToMinmax( empty );
+  var got = _.avector.distributionRangeSummary( empty );
   test.identical( got,expected )
 
   test.description = 'empty array with filtering'; //
@@ -389,47 +394,510 @@ function reduceToMinmax( test )
   {
     min : { value : NaN, index : -1, container : null },
     max : { value : NaN, index : -1, container : null },
+    median : NaN,
   };
-  var got = _.avector.reduceToMinmaxFiltering( empty,filter );
+  var got = _.avector.distributionRangeSummaryFiltering( empty,filter );
   test.identical( got,expected )
 
-  test.description = 'no array'; //
-
-  var expected =
-  {
-    min : { value : NaN, index : -1, container : null },
-    max : { value : NaN, index : -1, container : null },
-  };
-  var got = _.avector.reduceToMinmax();
-  test.identical( got,expected )
-
-  test.description = 'no array with filtering'; //
-
-  var expected =
-  {
-    min : { value : NaN, index : -1, container : null },
-    max : { value : NaN, index : -1, container : null },
-  };
-  var got = _.avector.reduceToMinmaxFiltering( filter );
-  test.identical( got,expected )
+  // test.description = 'no array'; //
+  //
+  // var expected =
+  // {
+  //   min : { value : NaN, index : -1, container : null },
+  //   max : { value : NaN, index : -1, container : null },
+  // };
+  // var got = _.avector.distributionRangeSummary();
+  // test.identical( got,expected )
+  //
+  // test.description = 'no array with filtering'; //
+  //
+  // var expected =
+  // {
+  //   min : { value : NaN, index : -1, container : null },
+  //   max : { value : NaN, index : -1, container : null },
+  // };
+  // var got = _.avector.distributionRangeSummaryFiltering( filter );
+  // test.identical( got,expected )
 
   test.description = 'bad arguments'; //
 
   if( Config.debug )
   {
 
-    test.shouldThrowErrorSync( () => _.avector.reduceToMinmax( 1 ) );
-    test.shouldThrowErrorSync( () => _.avector.reduceToMinmax( [ 1 ],1 ) );
-    test.shouldThrowErrorSync( () => _.avector.reduceToMinmax( [ 1 ],undefined ) );
+    test.shouldThrowErrorSync( () => _.avector.distributionRangeSummary() );
+    test.shouldThrowErrorSync( () => _.avector.distributionRangeSummary( 1 ) );
+    test.shouldThrowErrorSync( () => _.avector.distributionRangeSummary( '1' ) );
+    test.shouldThrowErrorSync( () => _.avector.distributionRangeSummary( [ 1 ],1 ) );
+    test.shouldThrowErrorSync( () => _.avector.distributionRangeSummary( [ 1 ],undefined ) );
 
-    test.shouldThrowErrorSync( () => _.avector.reduceToMinmaxFiltering( [ 1,2,3 ] ) );
-    test.shouldThrowErrorSync( () => _.avector.reduceToMinmaxFiltering( [ 1,2,3 ],null ) );
-    test.shouldThrowErrorSync( () => _.avector.reduceToMinmaxFiltering( [ 1,2,3 ],function(){} ) );
-    test.shouldThrowErrorSync( () => _.avector.reduceToMinmaxFiltering( 1,filter ) );
-    test.shouldThrowErrorSync( () => _.avector.reduceToMinmaxFiltering( [ 1 ],1,filter ) );
-    test.shouldThrowErrorSync( () => _.avector.reduceToMinmaxFiltering( [ 1 ],undefined,filter ) );
+    test.shouldThrowErrorSync( () => _.avector.distributionRangeSummaryFiltering() );
+    test.shouldThrowErrorSync( () => _.avector.distributionRangeSummaryFiltering( [ 1,2,3 ] ) );
+    test.shouldThrowErrorSync( () => _.avector.distributionRangeSummaryFiltering( [ 1,2,3 ],null ) );
+    test.shouldThrowErrorSync( () => _.avector.distributionRangeSummaryFiltering( [ 1,2,3 ],() => true ) );
+    test.shouldThrowErrorSync( () => _.avector.distributionRangeSummaryFiltering( 1,filter ) );
+    test.shouldThrowErrorSync( () => _.avector.distributionRangeSummaryFiltering( [ 1 ],1,filter ) );
+    test.shouldThrowErrorSync( () => _.avector.distributionRangeSummaryFiltering( [ 1 ],undefined,filter ) );
 
   }
+
+}
+
+//
+
+function reduceToAverage( test )
+{
+
+  test.description = 'simple even'; //
+
+  var expected = 2.5;
+  var got = _.avector.reduceToAverage([ 1,2,3,4 ]);
+  test.equivalent( got,expected );
+
+  test.description = 'simple odd'; //
+
+  var expected = 2;
+  var got = _.avector.reduceToAverage([ 1,2,3 ]);
+  test.equivalent( got,expected );
+
+  test.description = 'several vectors'; //
+
+  var expected = 3;
+  var got = _.avector.reduceToAverage( [ 1,2,3 ],[ 4,5 ] );
+  test.equivalent( got,expected );
+
+  test.description = 'empty'; //
+
+  var expected = NaN;
+  var got = _.avector.reduceToAverage([]);
+  test.equivalent( got,expected );
+
+  test.description = 'simple even, filtering'; //
+
+  var expected = 2;
+  var got = _.avector.reduceToAverageFiltering( [ 1,2,3,4 ],( e,op ) => e % 2 );
+  test.equivalent( got,expected );
+
+  test.description = 'simple odd, filtering'; //
+
+  var expected = 2;
+  var got = _.avector.reduceToAverageFiltering( [ 1,2,3 ],( e,op ) => e % 2 );
+  test.equivalent( got,expected );
+
+  test.description = 'several vectors, filtering'; //
+
+  var expected = 3;
+  var got = _.avector.reduceToAverageFiltering( [ 1,2,3 ],[ 4,5 ],( e,op ) => e % 2 );
+  test.equivalent( got,expected );
+
+  test.description = 'empty, filtering'; //
+
+  var expected = NaN;
+  var got = _.avector.reduceToAverageFiltering( [],( e,op ) => e % 2 );
+  test.equivalent( got,expected );
+
+  test.description = 'bad arguments'; //
+
+  test.shouldThrowErrorSync( () => _.reduceToAverage() );
+  test.shouldThrowErrorSync( () => _.reduceToAverage( 'x' ) );
+  test.shouldThrowErrorSync( () => _.reduceToAverage( 1 ) );
+  test.shouldThrowErrorSync( () => _.reduceToAverage( [ 1 ],'x' ) );
+  test.shouldThrowErrorSync( () => _.reduceToAverage( [ 1 ],1 ) );
+
+  test.shouldThrowErrorSync( () => _.reduceToAverageFiltering() );
+  test.shouldThrowErrorSync( () => _.reduceToAverageFiltering( () => true ) );
+  test.shouldThrowErrorSync( () => _.reduceToAverageFiltering( 'x',() => true ) );
+  test.shouldThrowErrorSync( () => _.reduceToAverageFiltering( 1,() => true ) );
+  test.shouldThrowErrorSync( () => _.reduceToAverageFiltering( [ 1 ],'x',() => true ) );
+  test.shouldThrowErrorSync( () => _.reduceToAverageFiltering( [ 1 ],1,() => true ) );
+
+}
+
+//
+
+function median( test )
+{
+
+  test.description = 'simple even'; //
+
+  var expected = 5;
+  var got = _.avector.median([ 1,2,3,9 ]);
+  test.equivalent( got,expected );
+
+  test.description = 'simple odd'; //
+
+  var expected = 5;
+  var got = _.avector.median([ 1,2,9 ]);
+  test.equivalent( got,expected );
+
+  test.description = 'empty'; //
+
+  var expected = NaN;
+  var got = _.avector.median([]);
+  test.equivalent( got,expected );
+
+}
+
+//
+
+function mean( test )
+{
+
+  test.description = 'simple even'; //
+
+  var expected = 2.5;
+  var got = _.avector.mean([ 1,2,3,4 ]);
+  test.equivalent( got,expected );
+
+  test.description = 'simple odd'; //
+
+  var expected = 2;
+  var got = _.avector.mean([ 1,2,3 ]);
+  test.equivalent( got,expected );
+
+  test.description = 'empty'; //
+
+  var expected = 0;
+  var got = _.avector.mean([]);
+  test.equivalent( got,expected );
+
+  test.description = 'simple even, filtering'; //
+
+  var expected = 2;
+  var got = _.avector.meanFiltering( [ 1,2,3,4 ],( e,op ) => e % 2 );
+  test.equivalent( got,expected );
+
+  test.description = 'simple odd, filtering'; //
+
+  var expected = 2;
+  var got = _.avector.meanFiltering( [ 1,2,3 ],( e,op ) => e % 2 );
+  test.equivalent( got,expected );
+
+  test.description = 'empty, filtering'; //
+
+  var expected = 0;
+  var got = _.avector.meanFiltering( [],( e,op ) => e % 2 );
+  test.equivalent( got,expected );
+
+  test.description = 'bad arguments'; //
+
+  test.shouldThrowErrorSync( () => _.mean() );
+  test.shouldThrowErrorSync( () => _.mean( 'x' ) );
+  test.shouldThrowErrorSync( () => _.mean( 1 ) );
+  test.shouldThrowErrorSync( () => _.mean( [ 1 ],'x' ) );
+  test.shouldThrowErrorSync( () => _.mean( [ 1 ],1 ) );
+  test.shouldThrowErrorSync( () => _.mean( [ 1 ],[ 1 ] ) );
+  test.shouldThrowErrorSync( () => _.mean( [ 1 ],[ 1 ] ) );
+
+  test.shouldThrowErrorSync( () => _.meanFiltering() );
+  test.shouldThrowErrorSync( () => _.meanFiltering( () => true ) );
+  test.shouldThrowErrorSync( () => _.meanFiltering( 'x',() => true ) );
+  test.shouldThrowErrorSync( () => _.meanFiltering( 1,() => true ) );
+  test.shouldThrowErrorSync( () => _.meanFiltering( [ 1 ],'x',() => true ) );
+  test.shouldThrowErrorSync( () => _.meanFiltering( [ 1 ],1,() => true ) );
+  test.shouldThrowErrorSync( () => _.meanFiltering( [ 1 ],[ 1 ],() => true ) );
+  test.shouldThrowErrorSync( () => _.meanFiltering( [ 1 ],[ 1 ],() => true ) );
+
+}
+
+//
+
+function moment( test )
+{
+  debugger;
+
+  test.description = 'first even'; //
+
+  var expected = 2.5;
+  var got = _.avector.moment( [ 1,2,3,4 ],1 );
+  test.equivalent( got,expected );
+
+  test.description = 'first odd'; //
+
+  var expected = 2;
+  var got = _.avector.moment( [ 1,2,3 ],1 );
+  test.equivalent( got,expected );
+
+  test.description = 'first empty'; //
+
+  var expected = 0;
+  var got = _.avector.moment( [],1 );
+  test.equivalent( got,expected );
+
+  test.description = 'second even'; //
+
+  var expected = 30 / 4;
+  var got = _.avector.moment( [ 1,2,3,4 ],2 );
+  test.equivalent( got,expected );
+
+  test.description = 'second odd'; //
+
+  var expected = 14 / 3;
+  var got = _.avector.moment( [ 1,2,3 ],2 );
+  test.equivalent( got,expected );
+
+  test.description = 'second empty'; //
+
+  var expected = 0;
+  var got = _.avector.moment( [],2 );
+  test.equivalent( got,expected );
+
+  test.description = 'simple even, filtering'; //
+
+  var expected = 5;
+  var got = _.avector.momentFiltering( [ 1,2,3,4 ],2,( e,op ) => e % 2 );
+  test.equivalent( got,expected );
+
+  test.description = 'simple odd, filtering'; //
+
+  var expected = 5;
+  var got = _.avector.momentFiltering( [ 1,2,3 ],2,( e,op ) => e % 2 );
+  test.equivalent( got,expected );
+
+  test.description = 'empty, filtering'; //
+
+  var expected = 0;
+  var got = _.avector.momentFiltering( [],2,( e,op ) => e % 2 );
+  test.equivalent( got,expected );
+
+  test.description = 'bad arguments'; //
+
+  test.shouldThrowErrorSync( () => _.moment() );
+  test.shouldThrowErrorSync( () => _.moment( [ 1 ] ) );
+  test.shouldThrowErrorSync( () => _.moment( 1 ) );
+  test.shouldThrowErrorSync( () => _.moment( 'x',1 ) );
+  test.shouldThrowErrorSync( () => _.moment( 1,1 ) );
+  test.shouldThrowErrorSync( () => _.moment( [ 1 ],'x' ) );
+  test.shouldThrowErrorSync( () => _.moment( [ 1 ],1 ) );
+  test.shouldThrowErrorSync( () => _.moment( [ 1 ],[ 1 ] ) );
+  test.shouldThrowErrorSync( () => _.moment( [ 1 ],[ 1 ] ) );
+
+  test.shouldThrowErrorSync( () => _.momentFiltering() );
+  test.shouldThrowErrorSync( () => _.momentFiltering( () => true ) );
+  test.shouldThrowErrorSync( () => _.momentFiltering( [ 1 ],() => true ) );
+  test.shouldThrowErrorSync( () => _.momentFiltering( 1 ),() => true );
+  test.shouldThrowErrorSync( () => _.momentFiltering( 'x',1,() => true ) );
+  test.shouldThrowErrorSync( () => _.momentFiltering( 1,1,() => true ) );
+  test.shouldThrowErrorSync( () => _.momentFiltering( [ 1 ],'x',() => true ) );
+  test.shouldThrowErrorSync( () => _.momentFiltering( 1,[ 1 ],() => true ) );
+  test.shouldThrowErrorSync( () => _.momentFiltering( [ 1 ],[ 1 ],() => true ) );
+  test.shouldThrowErrorSync( () => _.momentFiltering( [ 1 ],[ 1 ],() => true ) );
+
+}
+
+//
+
+function momentCentral( test )
+{
+
+  test.description = 'first even'; //
+
+  var expected = 0;
+  var got = _.avector.momentCentral( [ 1,2,3,4 ],1,2.5 );
+  test.equivalent( got,expected );
+
+  test.description = 'first odd'; //
+
+  var expected = 0;
+  var got = _.avector.momentCentral( [ 1,2,3 ],1,2 );
+  test.equivalent( got,expected );
+
+  test.description = 'first empty'; //
+
+  var expected = 0;
+  var got = _.avector.momentCentral( [],1,0 );
+  test.equivalent( got,expected );
+
+  test.description = 'second even'; //
+
+  var expected = 5 / 4;
+  var got = _.avector.momentCentral( [ 1,2,3,4 ],2,2.5 );
+  test.equivalent( got,expected );
+
+  test.description = 'second odd'; //
+
+  var expected = 2 / 3;
+  debugger;
+  var got = _.avector.momentCentral( [ 1,2,3 ],2,2 );
+  test.equivalent( got,expected );
+
+  test.description = 'second empty'; //
+
+  var expected = 0;
+  var got = _.avector.momentCentral( [],2,0 );
+  test.equivalent( got,expected );
+
+  test.description = 'first even'; //
+
+  var expected = 0;
+  var got = _.avector.momentCentral( [ 1,2,3,4 ],1 );
+  test.equivalent( got,expected );
+
+  test.description = 'first odd'; //
+
+  var expected = 0;
+  var got = _.avector.momentCentral( [ 1,2,3 ],1 );
+  test.equivalent( got,expected );
+
+  test.description = 'first empty'; //
+
+  var expected = 0;
+  var got = _.avector.momentCentral( [],1 );
+  test.equivalent( got,expected );
+
+  test.description = 'second even'; //
+
+  var expected = 5 / 4;
+  var got = _.avector.momentCentral( [ 1,2,3,4 ],2 );
+  test.equivalent( got,expected );
+
+  test.description = 'second odd'; //
+
+  var expected = 2 / 3;
+  debugger;
+  var got = _.avector.momentCentral( [ 1,2,3 ],2 );
+  test.equivalent( got,expected );
+
+  test.description = 'second empty'; //
+
+  var expected = 0;
+  var got = _.avector.momentCentral( [],2 );
+  test.equivalent( got,expected );
+
+  test.description = 'first even, with mean : null'; //
+
+  var expected = 0;
+  var got = _.avector.momentCentral( [ 1,2,3,4 ],1,null );
+  test.equivalent( got,expected );
+
+  test.description = 'first odd, with mean : null'; //
+
+  var expected = 0;
+  var got = _.avector.momentCentral( [ 1,2,3 ],1,null );
+  test.equivalent( got,expected );
+
+  test.description = 'first empty, with mean : null'; //
+
+  var expected = 0;
+  var got = _.avector.momentCentral( [],1,null );
+  test.equivalent( got,expected );
+
+  test.description = 'second even, with mean : null'; //
+
+  var expected = 5 / 4;
+  var got = _.avector.momentCentral( [ 1,2,3,4 ],2,null );
+  test.equivalent( got,expected );
+
+  test.description = 'second odd, with mean : null'; //
+
+  var expected = 2 / 3;
+  debugger;
+  var got = _.avector.momentCentral( [ 1,2,3 ],2,null );
+  test.equivalent( got,expected );
+
+  test.description = 'second empty, with mean : null'; //
+
+  var expected = 0;
+  var got = _.avector.momentCentral( [],2,null );
+  test.equivalent( got,expected );
+
+  test.description = 'first even, filtering'; //
+
+  var expected = 0;
+  var got = _.avector.momentCentralFiltering( [ 1,2,3,4 ],1,( e,op ) => e % 2 );
+  test.equivalent( got,expected );
+
+  test.description = 'first odd, filtering'; //
+
+  var expected = 0;
+  var got = _.avector.momentCentralFiltering( [ 1,2,3 ],1,( e,op ) => e % 2 );
+  test.equivalent( got,expected );
+
+  test.description = 'first empty, filtering'; //
+
+  var expected = 0;
+  var got = _.avector.momentCentralFiltering( [],1,( e,op ) => e % 2 );
+  test.equivalent( got,expected );
+
+  test.description = 'second even, filtering'; //
+
+  var expected = 1;
+  var got = _.avector.momentCentralFiltering( [ 1,2,3,4 ],2,( e,op ) => e % 2 );
+  test.equivalent( got,expected );
+
+  test.description = 'second odd, filtering'; //
+
+  var expected = 1;
+  var got = _.avector.momentCentralFiltering( [ 1,2,3 ],2,( e,op ) => e % 2 );
+  test.equivalent( got,expected );
+
+  test.description = 'second empty, filtering'; //
+
+  var expected = 0;
+  var got = _.avector.momentCentralFiltering( [],2,( e,op ) => e % 2 );
+  test.equivalent( got,expected );
+
+  test.description = 'first even, filtering, with mean : null'; //
+
+  var expected = 0;
+  var got = _.avector.momentCentralFiltering( [ 1,2,3,4 ],1,null,( e,op ) => e % 2 );
+  test.equivalent( got,expected );
+
+  test.description = 'first odd, filtering, with mean : null'; //
+
+  var expected = 0;
+  var got = _.avector.momentCentralFiltering( [ 1,2,3 ],1,null,( e,op ) => e % 2 );
+  test.equivalent( got,expected );
+
+  test.description = 'first empty, filtering, with mean : null'; //
+
+  var expected = 0;
+  var got = _.avector.momentCentralFiltering( [],1,null,( e,op ) => e % 2 );
+  test.equivalent( got,expected );
+
+  test.description = 'second even, filtering, with mean : null'; //
+
+  var expected = 1;
+  var got = _.avector.momentCentralFiltering( [ 1,2,3,4 ],2,null,( e,op ) => e % 2 );
+  test.equivalent( got,expected );
+
+  test.description = 'second odd, filtering, with mean : null'; //
+
+  var expected = 1;
+  var got = _.avector.momentCentralFiltering( [ 1,2,3 ],2,null,( e,op ) => e % 2 );
+  test.equivalent( got,expected );
+
+  test.description = 'second empty, filtering, with mean : null'; //
+
+  var expected = 0;
+  var got = _.avector.momentCentralFiltering( [],2,null,( e,op ) => e % 2 );
+  test.equivalent( got,expected );
+
+  test.description = 'bad arguments'; //
+
+  test.shouldThrowErrorSync( () => _.momentCentral() );
+  test.shouldThrowErrorSync( () => _.momentCentral( [ 1 ] ) );
+  test.shouldThrowErrorSync( () => _.momentCentral( [ 1 ],'1' ) );
+  test.shouldThrowErrorSync( () => _.momentCentral( [ 1 ],[ 1 ] ) );
+  test.shouldThrowErrorSync( () => _.momentCentral( 1 ) );
+  test.shouldThrowErrorSync( () => _.momentCentral( 'x',1 ) );
+  test.shouldThrowErrorSync( () => _.momentCentral( 1,1 ) );
+  test.shouldThrowErrorSync( () => _.momentCentral( [ 1 ],'x' ) );
+  test.shouldThrowErrorSync( () => _.momentCentral( [ 1 ],1 ) );
+  test.shouldThrowErrorSync( () => _.momentCentral( [ 1 ],[ 1 ] ) );
+  test.shouldThrowErrorSync( () => _.momentCentral( [ 1 ],[ 1 ] ) );
+
+  test.shouldThrowErrorSync( () => _.momentCentralFiltering() );
+  test.shouldThrowErrorSync( () => _.momentCentralFiltering( () => true ) );
+  test.shouldThrowErrorSync( () => _.momentCentralFiltering( [ 1 ],'1',() => true ) );
+  test.shouldThrowErrorSync( () => _.momentCentralFiltering( [ 1 ],[ 1 ],() => true ) );
+  test.shouldThrowErrorSync( () => _.momentCentralFiltering( [ 1 ],() => true ) );
+  test.shouldThrowErrorSync( () => _.momentCentralFiltering( 1 ),() => true );
+  test.shouldThrowErrorSync( () => _.momentCentralFiltering( 'x',1,() => true ) );
+  test.shouldThrowErrorSync( () => _.momentCentralFiltering( 1,1,() => true ) );
+  test.shouldThrowErrorSync( () => _.momentCentralFiltering( [ 1 ],'x',() => true ) );
+  test.shouldThrowErrorSync( () => _.momentCentralFiltering( 1,[ 1 ],() => true ) );
+  test.shouldThrowErrorSync( () => _.momentCentralFiltering( [ 1 ],[ 1 ],() => true ) );
+  test.shouldThrowErrorSync( () => _.momentCentralFiltering( [ 1 ],[ 1 ],() => true ) );
 
 }
 
@@ -1172,6 +1640,20 @@ function polynomApply( test )
 
 }
 
+//
+
+function experiment( test )
+{
+
+  var summary = _.avector.distributionSummary([ 1,2,3,4,9 ]);
+  logger.log( 'summary',summary );
+
+  debugger;
+  test.identical( 1,1 );
+}
+
+experiment.experimental = 1;
+
 // --
 // proto
 // --
@@ -1192,7 +1674,13 @@ var Self =
     sort : sort,
     dot : dot,
     subarray : subarray,
-    reduceToMinmax : reduceToMinmax,
+
+    distributionRangeSummary : distributionRangeSummary,
+    reduceToAverage : reduceToAverage,
+    median : median,
+    mean : mean,
+    moment : moment,
+    momentCentral : momentCentral,
 
     atomParrallelWithScalar : atomParrallelWithScalar,
     atomParrallelOnlyVectors : atomParrallelOnlyVectors,
@@ -1201,6 +1689,8 @@ var Self =
     swap : swap,
     polynomApply : polynomApply,
 
+    experiment : experiment,
+
   },
 
 };
@@ -1208,7 +1698,7 @@ var Self =
 //
 
 Self = wTestSuite( Self );
-// if( typeof module !== 'undefined' && !module.parent )
-_.Testing.test( Self.name );
+if( typeof module !== 'undefined' && !module.parent )
+_.Tester.test( Self.name );
 
 } )( );

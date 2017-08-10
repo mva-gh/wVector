@@ -163,6 +163,7 @@ function fromArray( srcArray )
 {
 
   _.assert( arguments.length === 1 );
+  _.assert( _.vectorIs( srcArray ) || _.arrayLike( srcArray ) );
 
   if( srcArray._vectorBuffer )
   return srcArray;
@@ -406,7 +407,8 @@ function withWrapper( o )
     if( _routineIs( arg ) )
     return arg;
 
-    if( _hasLength( arg ) && ( !_.Space || !( arg instanceof _.Space ) ) )
+    // if( _hasLength( arg ) && ( !_.Space || !( arg instanceof _.Space ) ) )
+    if( _.arrayLike( arg ) )
     return Self.fromArray( arg );
     return arg;
   }

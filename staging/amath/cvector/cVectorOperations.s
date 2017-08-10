@@ -14,6 +14,7 @@ var _min = Math.min;
 var _max = Math.max;
 var _sqrt = Math.sqrt;
 var _abs = Math.abs;
+var _pow = Math.pow;
 
 var _floor = Math.floor;
 var _ceil = Math.ceil;
@@ -78,25 +79,27 @@ round.onAtom = function round( o )
 
 //
 
-var routines =
-{
-
-  inv : inv,
-  invOrOne : invOrOne,
-
-  floor : floor,
-  ceil : ceil,
-  round : round,
-
-}
+// var routines =
+// {
+//
+//   inv : inv,
+//   invOrOne : invOrOne,
+//
+//   floor : floor,
+//   ceil : ceil,
+//   round : round,
+//
+// }
 
 //
 
 function singleOperationsAdjust()
 {
-  for( var op in routines )
+  var atomWiseSingle = Self.atomWiseSingle = Self.atomWiseSingle || Object.create( null );
+
+  for( var op in Routines.atomWiseSingle )
   {
-    var operation = routines[ op ];
+    var operation = Routines.atomWiseSingle[ op ];
 
     if( operation.takingArguments === undefined )
     operation.takingArguments = [ 1,1 ];
@@ -116,12 +119,11 @@ function singleOperationsAdjust()
     _.assert( !Self.atomWiseSingle[ op ] );
 
     Self.atomWiseSingle[ op ] = operation;
-
   }
 }
 
-var atomWiseSingle = Self.atomWiseSingle = Self.atomWiseSingle || Object.create( null );
-singleOperationsAdjust();
+// var atomWiseSingle = Self.atomWiseSingle = Self.atomWiseSingle || Object.create( null );
+// singleOperationsAdjust();
 
 // --
 // atomWiseCommutative
@@ -134,7 +136,7 @@ add.onAtom = function add( o )
   o.dstElement = o.dstElement + o.srcElement;
 }
 
-add.onAtomBegin = function addBegin( o )
+add.onAtomsBegin = function addBegin( o )
 {
   o.dstElement = 0;
 }
@@ -148,7 +150,7 @@ sub.onAtom = function sub( o )
   o.dstElement = o.dstElement - o.srcElement;
 }
 
-sub.onAtomBegin = function subBegin( o )
+sub.onAtomsBegin = function subBegin( o )
 {
   o.dstElement = 0;
 }
@@ -162,7 +164,7 @@ mul.onAtom = function mul( o )
   o.dstElement = o.dstElement * o.srcElement;
 }
 
-mul.onAtomBegin = function mulBegin( o )
+mul.onAtomsBegin = function mulBegin( o )
 {
   o.dstElement = 1;
 }
@@ -176,7 +178,7 @@ div.onAtom = function div( o )
   o.dstElement = o.dstElement / o.srcElement;
 }
 
-div.onAtomBegin = function divBegin( o )
+div.onAtomsBegin = function divBegin( o )
 {
   o.dstElement = 1;
 }
@@ -199,7 +201,7 @@ min.onAtom = function min( o )
   o.dstElement = _min( o.dstElement , o.srcElement );
 }
 
-min.onAtomBegin = function minBegin( o )
+min.onAtomsBegin = function minBegin( o )
 {
   o.dstElement = +Infinity;
 }
@@ -213,34 +215,56 @@ max.onAtom = function max( o )
   o.dstElement = _max( o.dstElement , o.srcElement );
 }
 
-max.onAtomBegin = function maxBegin( o )
+max.onAtomsBegin = function maxBegin( o )
 {
   o.dstElement = +Infinity;
 }
 
 //
 
-var routines =
-{
+// var mean = Object.create( null );
+//
+// mean.onAtom = function mean( o )
+// {
+//   o.dstElement += o.srcElement;
+// }
+//
+// mean.onAtomsBegin = function meanBegin( o )
+// {
+//   o.dstElement = 0;
+// }
+//
+// mean.onAtomsEnd = function meanEnd( o )
+// {
+//   debugger;
+//   o.dstElement /= 1;
+// }
 
-  add : add,
-  sub : sub,
-  mul : mul,
-  div : div,
+//
 
-  assign : assign,
-  min : min,
-  max : max,
-
-}
+// var routines =
+// {
+//
+//   add : add,
+//   sub : sub,
+//   mul : mul,
+//   div : div,
+//
+//   assign : assign,
+//   min : min,
+//   max : max,
+//
+// }
 
 //
 
 function parallelOperationsAdjust()
 {
-  for( var op in routines )
+  var atomWiseCommutative = Self.atomWiseCommutative = Self.atomWiseCommutative || Object.create( null );
+
+  for( var op in Routines.atomWiseCommutative )
   {
-    var operation = routines[ op ];
+    var operation = Routines.atomWiseCommutative[ op ];
     if( operation.takingArguments === undefined )
     operation.takingArguments = [ 2,2 ];
     else if( _.numberIs( operation.takingArguments ) )
@@ -261,12 +285,11 @@ function parallelOperationsAdjust()
     _.assert( !Self.atomWiseCommutative[ op ] );
 
     Self.atomWiseCommutative[ op ] = operation;
-
   }
 }
 
-var atomWiseCommutative = Self.atomWiseCommutative = Self.atomWiseCommutative || Object.create( null );
-parallelOperationsAdjust();
+// var atomWiseCommutative = Self.atomWiseCommutative = Self.atomWiseCommutative || Object.create( null );
+// parallelOperationsAdjust();
 
 // --
 // atomWiseNotCommutative
@@ -345,26 +368,28 @@ mix.input = [ 'vw','vr|s*3' ];
 
 //
 
-var routines =
-{
-
-  addScaled : addScaled,
-  subScaled : subScaled,
-  mulScaled : mulScaled,
-  divScaled : divScaled,
-
-  clamp : clamp,
-  mix : mix,
-
-}
+// var routines =
+// {
+//
+//   addScaled : addScaled,
+//   subScaled : subScaled,
+//   mulScaled : mulScaled,
+//   divScaled : divScaled,
+//
+//   clamp : clamp,
+//   mix : mix,
+//
+// }
 
 //
 
 function notParallelOperationsAdjust()
 {
-  for( var op in routines )
+  var atomWiseNotCommutative = Self.atomWiseNotCommutative = Self.atomWiseNotCommutative || Object.create( null );
+
+  for( var op in Routines.atomWiseNotCommutative )
   {
-    var operation = routines[ op ];
+    var operation = Routines.atomWiseNotCommutative[ op ];
 
     if( _.numberIs( operation.takingArguments ) )
     operation.takingArguments = [ operation.takingArguments,operation.takingArguments ];
@@ -381,6 +406,7 @@ function notParallelOperationsAdjust()
     _.assert( operation.takingArguments.length === 2 );
     _.assert( _.strIsNotEmpty( operation.name ) );
     _.assert( operation.onAtom.length === 1 );
+    _.assert( operation.input );
     _.assert( !Self.atomWiseNotCommutative[ op ] );
 
     Self.atomWiseNotCommutative[ op ] = operation;
@@ -388,7 +414,344 @@ function notParallelOperationsAdjust()
   }
 }
 
-var atomWiseNotCommutative = Self.atomWiseNotCommutative = Self.atomWiseNotCommutative || Object.create( null );
+// var atomWiseNotCommutative = Self.atomWiseNotCommutative = Self.atomWiseNotCommutative || Object.create( null );
+// notParallelOperationsAdjust();
+
+// --
+// reducingOperations
+// --
+
+var polynomApply = Object.create( null );
+
+polynomApply.onAtom = function polynomApply( o )
+{
+  debugger;
+  var x = o.args[ 1 ];
+  o.result += o.element * _pow( x,o.key );
+}
+
+polynomApply.onAtomsBegin = function( o )
+{
+  debugger;
+  o.result = 0;
+}
+
+polynomApply.onAtomsEnd = function( o )
+{
+  debugger;
+}
+
+polynomApply.takingArguments = [ 2,2 ];
+polynomApply.takingVectors = [ 1,1 ];
+polynomApply.takingVectorsOnly = false;
+
+//
+
+var mean = Object.create( null );
+
+mean.onAtom = function mean( o )
+{
+  o.result.total += o.element;
+  o.result.nelement += 1;
+}
+
+mean.onAtomsBegin = function( o )
+{
+  o.result = Object.create( null );
+  o.result.total = 0;
+  o.result.nelement = 0;
+}
+
+mean.onAtomsEnd = function( o )
+{
+  if( o.result.nelement )
+  o.result = o.result.total / o.result.nelement;
+  else
+  o.result = 0;
+}
+
+mean.input = [ 'vr' ];
+mean.takingArguments = 1;
+mean.takingVectors = 1;
+
+//
+
+var moment = Object.create( null );
+
+moment.onAtom = function moment( o )
+{
+  o.result.total += _pow( o.element,o.args[ 1 ] );
+  o.result.nelement += 1;
+}
+
+moment.onAtomsBegin = function( o )
+{
+  o.result = Object.create( null );
+  o.result.total = 0;
+  o.result.nelement = 0;
+}
+
+moment.onAtomsEnd = function( o )
+{
+  if( o.result.nelement )
+  o.result = o.result.total / o.result.nelement;
+  else
+  o.result = 0;
+}
+
+moment.input = [ 'vr','s' ];
+moment.takingArguments = 2;
+moment.takingVectors = 1;
+
+//
+
+var _momentCentral = Object.create( null );
+
+_momentCentral.onAtom = function _momentCentral( o )
+{
+  var degree = o.args[ 1 ];
+  var mean = o.args[ 2 ];
+  o.result.total += _pow( o.element - mean,degree );
+  o.result.nelement += 1;
+}
+
+_momentCentral.onAtomsBegin = function( o )
+{
+  var degree = o.args[ 1 ];
+  var mean = o.args[ 2 ];
+  _.assert( _.numberIs( degree ) )
+  _.assert( _.numberIs( mean ) )
+  o.result = Object.create( null );
+  o.result.total = 0;
+  o.result.nelement = 0;
+}
+
+_momentCentral.onAtomsEnd = function( o )
+{
+  if( o.result.nelement )
+  o.result = o.result.total / o.result.nelement;
+  else
+  o.result = 0;
+}
+
+_momentCentral.input = [ 'vr','s','s' ];
+_momentCentral.takingArguments = [ 3,3 ];
+_momentCentral.takingVectors = 1;
+
+//
+
+var reduceToAverage = Object.create( null );
+
+reduceToAverage.onAtom = function reduceToAverage( o )
+{
+  o.result.total += o.element;
+  o.result.nelement += 1;
+}
+
+reduceToAverage.onAtomsBegin = function( o )
+{
+  o.result = Object.create( null );
+  o.result.total = 0;
+  o.result.nelement = 0;
+}
+
+reduceToAverage.onAtomsEnd = function( o )
+{
+  // if( o.result.nelement )
+  o.result = o.result.total / o.result.nelement;
+  // else
+  // o.result = 0;
+}
+
+//
+
+var reduceToProduct = Object.create( null );
+
+reduceToProduct.onAtom = function reduceToProduct( o )
+{
+  o.result *= o.element;
+}
+
+reduceToProduct.onAtomsBegin = function( o )
+{
+  o.result = 1;
+}
+
+//
+
+var reduceToSum = Object.create( null );
+
+reduceToSum.onAtom = function reduceToSum( o )
+{
+  o.result += o.element;
+}
+
+reduceToSum.onAtomsBegin = function( o )
+{
+  o.result = 0;
+}
+
+//
+
+var reduceToAbsSum = Object.create( null );
+
+reduceToAbsSum.onAtom = function reduceToAbsSum( o )
+{
+  debugger;
+  o.result += abs( o.element );
+}
+
+reduceToAbsSum.onAtomsBegin = function( o )
+{
+  o.result = 0;
+}
+
+//
+
+var reduceToMagSqr = Object.create( null );
+
+reduceToMagSqr.onAtom = function reduceToMagSqr( o )
+{
+  o.result += _sqr( o.element );
+}
+
+reduceToMagSqr.onAtomsBegin = function( o )
+{
+  o.result = 0;
+}
+
+//
+
+var reduceToMag = _.mapExtend( null,reduceToMagSqr );
+
+reduceToMag.onAtomsEnd = function reduceToMag( o )
+{
+  o.result = _sqrt( o.result );
+}
+
+//
+
+// var routines =
+// {
+//
+//   polynomApply : polynomApply,
+//   reduceToAverage : reduceToAverage,
+//   reduceToProduct : reduceToProduct,
+//   reduceToSum : reduceToSum,
+//   reduceToAbsSum : reduceToAbsSum,
+//   reduceToMag : reduceToMag,
+//   reduceToMagSqr : reduceToMagSqr,
+//
+// }
+
+//
+
+function reducingOperationsAdjust()
+{
+  var reducingOperations = Self.reducingOperations = Self.reducingOperations || Object.create( null );
+
+  for( var op in Routines.reducingOperations )
+  {
+    var operation = Routines.reducingOperations[ op ];
+
+    if( _.numberIs( operation.takingArguments ) )
+    operation.takingArguments = [ operation.takingArguments,operation.takingArguments ];
+    else if( operation.takingArguments === undefined )
+    operation.takingArguments = [ 1,Infinity ];
+    operation.commutative = false;
+    operation.atomWise = true;
+    operation.reducing = true;
+
+    operation.onAtom.operation = operation;
+    if( !operation.name )
+    operation.name = operation.onAtom.name;
+
+    _.assert( _.mapIs( operation ) );
+    _.assert( _.routineIs( operation.onAtom ) );
+    _.assert( _.arrayIs( operation.takingArguments ) );
+    _.assert( operation.takingArguments.length === 2 );
+    _.assert( _.strIsNotEmpty( operation.name ) );
+    _.assert( operation.onAtom.length === 1 );
+    _.assert( !Self.reducingOperations[ op ] );
+
+    Self.reducingOperations[ op ] = operation;
+  }
+}
+
+// var reducingOperations = Self.reducingOperations = Self.reducingOperations || Object.create( null );
+// reducingOperationsAdjust();
+
+// --
+//
+// --
+
+var Routines =
+{
+
+  atomWiseSingle : //
+  {
+
+    inv : inv,
+    invOrOne : invOrOne,
+
+    floor : floor,
+    ceil : ceil,
+    round : round,
+
+  },
+
+  atomWiseCommutative : //
+  {
+
+    add : add,
+    sub : sub,
+    mul : mul,
+    div : div,
+
+    assign : assign,
+    min : min,
+    max : max,
+
+  },
+
+  atomWiseNotCommutative : //
+  {
+
+    addScaled : addScaled,
+    subScaled : subScaled,
+    mulScaled : mulScaled,
+    divScaled : divScaled,
+
+    clamp : clamp,
+    mix : mix,
+
+  },
+
+  reducingOperations : //
+  {
+
+    polynomApply : polynomApply,
+
+    mean : mean,
+    moment : moment,
+    _momentCentral : _momentCentral,
+
+    reduceToAverage : reduceToAverage,
+    reduceToProduct : reduceToProduct,
+    reduceToSum : reduceToSum,
+    reduceToAbsSum : reduceToAbsSum,
+    reduceToMag : reduceToMag,
+    reduceToMagSqr : reduceToMagSqr,
+
+  },
+
+}
+
+singleOperationsAdjust();
+parallelOperationsAdjust();
 notParallelOperationsAdjust();
+reducingOperationsAdjust();
+
+_.assert( _.entityIdentical( vector.operations,Routines ) );
 
 })();

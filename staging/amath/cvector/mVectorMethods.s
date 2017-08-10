@@ -93,11 +93,32 @@ function set()
 
 //
 
+function makeSimilar( length )
+{
+  var self = this;
+  _.assert( arguments.length === 0 || arguments.length === 1 );
+  return vector.makeSimilar( self,length );
+}
+
+//
+
 function copy( src )
 {
   var self = this;
   _.assert( arguments.length === 1 );
   return vector.set( self,src );
+}
+
+//
+
+function slice( b,e )
+{
+  var self = this;
+
+  _.assert( arguments.length <= 2 );
+  _.assert( _.vectorIs( self ) );
+
+  return vector.slice( self,b,e );
 }
 
 //
@@ -242,8 +263,10 @@ var Proto =
 
   set : set,
 
+  makeSimilar : makeSimilar,
   copy : copy,
 
+  slice : slice,
   toArray : toArray,
   toStr : toStr,
   subarray : subarray,
