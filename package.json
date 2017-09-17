@@ -11,14 +11,14 @@
     }
   ],
   "license": "MIT",
-  "main": "staging/amath/cvector/nArray.s",
+  "main": "staging/dwtools/amath/cvector/nArray.s",
   "files": [
-    "staging/amath",
+    "staging/dwtools/amath",
     "production"
   ],
   "directories": {
     "doc": "doc",
-    "main": "staging/amath/cvector/nArray.s"
+    "main": "staging/dwtools/amath/cvector/nArray.s"
   },
   "scripts": {
     "test": "wtest staging",
@@ -38,7 +38,7 @@
   },
   "devDependencies": {
     "wTesting": "",
-    "wvector": ""
+    "wvector": "."
   },
   "keywords": [
     "wTools",

@@ -7,7 +7,7 @@ if( typeof module !== 'undefined' )
 
   try
   {
-    require( '../../abase/wTools.s' );
+    require( '../../Base.s' );
   }
   catch( err )
   {
@@ -47,7 +47,7 @@ _.accessorForbid
 // row wrap
 // --
 
-var routines = _row._routineMathematical;
+var routines = _row.RoutinesMathematical;
 for( var r in routines )
 {
 
@@ -60,7 +60,12 @@ for( var r in routines )
   function onReturn( result,theRoutine )
   {
     var op = theRoutine.operation;
-    if( op.returningSelf )
+
+    if( op.returningNumber && _.numberIs( result ) )
+    {
+      return result;
+    }
+    else if( op.returningSelf )
     {
       return result.toArray();
     }
@@ -74,8 +79,7 @@ for( var r in routines )
       throw _.err( 'unexpected' );
       return result;
     }
-    else
-    return result;
+    else return result;
   }
 
   Proto[ r ] = _.vector.withWrapper
@@ -97,8 +101,18 @@ _.mapExtend( Self,Proto );
 
 wTools.avector = Self;
 
+// debugger;
+_._arrayDescriptorsApplyTo( Self );
+// debugger;
+_.assert( _.mapOwnKey( _.avector,'withArray' ) );
+_.assert( _.avector.withArray );
+_.assert( _.avector.withArray.Array );
+_.assert( _.avector.withArray.Float32 );
+// debugger;
+
 _.assert( Object.getPrototypeOf( Self ) === wTools );
-_.assert( _.objectIs( _row._routineMathematical ) );
-_.assert( _.avector.isValid );
+_.assert( _.objectIs( _row.RoutinesMathematical ) );
+_.assert( !_.avector.isValid );
+_.assert( _.avector.isFinite );
 
 })();

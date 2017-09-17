@@ -73,12 +73,21 @@ function eSet( index,val )
 
 //
 
-function set()
+function assign()
 {
   var self = this;
   var args = _.arraySlice( arguments );
   args.unshift( self );
-  return vector.set.call( self );
+  return vector.assign.apply( vector,args );
+}
+
+//
+
+function copy( src )
+{
+  var self = this;
+  _.assert( arguments.length === 1 );
+  return vector.assign( self,src );
 }
 
 //
@@ -98,15 +107,6 @@ function makeSimilar( length )
   var self = this;
   _.assert( arguments.length === 0 || arguments.length === 1 );
   return vector.makeSimilar( self,length );
-}
-
-//
-
-function copy( src )
-{
-  var self = this;
-  _.assert( arguments.length === 1 );
-  return vector.set( self,src );
 }
 
 //
@@ -201,7 +201,7 @@ equalWith.modifying = false;
 
 //
 
-function identicalWith( src )
+function identicalWith( src2,iterator )
 {
   var src1 = this;
   _.assert( arguments.length === 1 || arguments.length === 2 );
@@ -218,7 +218,7 @@ identicalWith.modifying = false;
 
 //
 
-function equivalentWith( src )
+function equivalentWith( src2,iterator )
 {
   var src1 = this;
   _.assert( arguments.length === 1 || arguments.length === 2 );
@@ -232,6 +232,29 @@ equivalentWith.takingVectorsOnly = false;
 equivalentWith.returningSelf = false;
 equivalentWith.returningNew = false;
 equivalentWith.modifying = false;
+
+//
+
+function sameWith( src2 )
+{
+  var src1 = this;
+  _.assert( arguments.length === 1 );
+  if( src1._vectorBuffer !== src2._vectorBuffer )
+  return false;
+  if( src1.offset !== src2.offset )
+  return false;
+  if( src1.length !== src2.length )
+  return false;
+  debugger;
+  return true;
+}
+
+sameWith.takingArguments = [ 2,3 ];
+sameWith.takingVectors = 2;
+sameWith.takingVectorsOnly = false;
+sameWith.returningSelf = false;
+sameWith.returningNew = false;
+sameWith.modifying = false;
 
 //
 
@@ -261,11 +284,10 @@ var Proto =
   eGet : eGet,
   eSet : eSet,
 
-  set : set,
-
-  makeSimilar : makeSimilar,
+  assign : assign,
   copy : copy,
 
+  makeSimilar : makeSimilar,
   slice : slice,
   toArray : toArray,
   toStr : toStr,
@@ -274,6 +296,7 @@ var Proto =
   equalWith : equalWith,
   identicalWith : identicalWith,
   equivalentWith : equivalentWith,
+  sameWith : sameWith,
 
   hasShape : hasShape,
 
@@ -292,9 +315,17 @@ function declareSingleArgumentRoutine( routine, r )
 
   var op = routine.operation;
 
-  if( !_.arrayIdentical( op.takingArguments, [ 1,1 ] ) )
-  return false;
-  if( !_.arrayIdentical( op.takingVectors, [ 1,1 ] ) )
+  // if( r === 'reduceToMean' )
+  // debugger;
+
+  var absLike = op.returningOnly === 'self' && op.modifying && op.atomWise && op.commutative;
+  var reduceToScalarLike = op.returningOnly === 'number' && !op.modifying && op.atomWise && op.commutative;
+
+  var singleArgument = _.arrayIdentical( op.takingArguments, [ 1,1 ] ) && _.arrayIdentical( op.takingVectors, [ 1,1 ] );
+  var oneOrTwoArguments = _.arrayIdentical( op.takingArguments, [ 1,2 ] ) && _.arrayIdentical( op.takingVectors, [ 1,2 ] );
+  var oneOrInfinity = _.arrayIdentical( op.takingArguments, [ 1,Infinity ] ) && _.arrayIdentical( op.takingVectors, [ 1,Infinity ] );
+
+  if( !singleArgument && ( !absLike || !oneOrTwoArguments ) && ( !reduceToScalarLike || !oneOrInfinity ) )
   return false;
 
   _.assert( Self.prototype[ r ] === undefined );
@@ -312,12 +343,15 @@ function declareSingleArgumentRoutine( routine, r )
 
 function declareTwoArgumentsRoutine( routine, r )
 {
-
   var op = routine.operation;
+
+  // if( r === 'mulScalar' )
+  // debugger;
 
   if( !_.arrayIdentical( op.takingArguments , [ 2,2 ] ) )
   return false;
-  if( !_.arrayIdentical( op.takingVectors , [ 1,1 ] ) )
+  // if( !_.arrayIdentical( op.takingVectors , [ 1,1 ] ) )
+  if( !_.arrayIdentical( op.takingVectors , [ 1,1 ] ) && !_.arrayIdentical( op.takingVectors , [ 0,1 ] ) )
   return false;
 
   _.assert( Self.prototype[ r ] === undefined );
@@ -333,7 +367,7 @@ function declareTwoArgumentsRoutine( routine, r )
 
 //
 
-var routines = _.vector._routineMathematical;
+var routines = _.vector.RoutinesMathematical;
 for( var r in routines )
 {
   var routine = routines[ r ];
@@ -344,5 +378,13 @@ for( var r in routines )
   declareTwoArgumentsRoutine( routine , r );
 
 }
+
+_.assert( Self.prototype.mag );
+_.assert( Self.prototype.magSqr );
+
+_.assert( Self.prototype.abs );
+_.assert( Self.prototype.makeSimilar );
+_.assert( Self.prototype.assign );
+_.assert( Self.prototype.slice );
 
 })();

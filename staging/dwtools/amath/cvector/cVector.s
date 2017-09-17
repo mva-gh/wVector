@@ -7,7 +7,7 @@ if( typeof module !== 'undefined' )
 
   try
   {
-    require( '../../abase/wTools.s' );
+    require( '../../Base.s' );
   }
   catch( err )
   {
@@ -53,6 +53,25 @@ function Vector(){ throw _.err( 'should not be called' ) };
 Vector.prototype = Object.create( null );
 Vector.prototype._vectorBuffer = null;
 
+// --
+// from
+// --
+
+function makeArrayOfLength( length )
+{
+  _.assert( arguments.length === 1 );
+  var srcArray = new this.ArrayType( length );
+  return fromArray( srcArray );
+}
+
+function makeArrayOfLengthWithValue( length,value )
+{
+  _.assert( arguments.length === 2 );
+  var srcArray = new this.ArrayType( length );
+  for( var i = 0 ; i < length ; i++ )
+  srcArray[ i ] = value;
+  return fromArray( srcArray );
+}
 
 // --
 // from
@@ -95,15 +114,6 @@ function fromMaybeNumber( number,length )
   _.constant( result,{ length : length } );
 
   return result;
-}
-
-//
-
-function fromNewArrayOfLength( length )
-{
-  _.assert( arguments.length === 1 );
-  var srcArray = new this.ArrayType( length );
-  return fromArray( srcArray );
 }
 
 //
@@ -204,6 +214,7 @@ function fromSubArray( srcArray,offset,length )
 {
 
   _.assert( arguments.length === 3 );
+  _.assert( srcArray );
   _.assert( offset+length <= srcArray.length );
 
   if( srcArray._vectorBuffer )
@@ -433,7 +444,7 @@ function withWrapper( o )
     for( ; d < takingVectors[ 0 ] ; d++, s++ )
     {
       args[ d ] = makeVector( arguments[ s ] );
-      _.assert( _.vectorIs( args[ d ] ) );
+      _.assert( _.vectorIs( args[ d ] ) || ( d === 0 && returningNew ) );
     }
 
     if( hasOptionalVectors )
@@ -463,9 +474,10 @@ function withWrapper( o )
 var routineFrom =
 {
 
-  fromMaybeNumber : fromMaybeNumber,
-  fromNewArrayOfLength : fromNewArrayOfLength,
+  makeArrayOfLength : makeArrayOfLength,
+  makeArrayOfLengthWithValue : makeArrayOfLengthWithValue,
 
+  fromMaybeNumber : fromMaybeNumber,
   from : from,
   fromArray : fromArray,
   fromSubArray : fromSubArray,

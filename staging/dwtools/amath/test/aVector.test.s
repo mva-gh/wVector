@@ -8,7 +8,7 @@ if( typeof module !== 'undefined' )
   //if( typeof wBase === 'undefined' )
   try
   {
-    require( '../../abase/wTools.s' );
+    require( '../../Base.s' );
   }
   catch( err )
   {
@@ -80,6 +80,82 @@ function vectorIs( test )
   test.shouldBe( _.clsIsVector( v3.constructor ) );
   test.shouldBe( _.clsIsVector( v4.constructor ) );
   test.shouldBe( _.clsIsVector( v5.constructor ) );
+
+}
+
+//
+
+function isFinite( test )
+{
+
+  test.identical( _.avector.isFinite([ 1,2,3 ]),true );
+  test.identical( _.avector.isFinite([ 0,0,0 ]),true );
+  test.identical( _.avector.isFinite([ 0,0,1 ]),true );
+
+  test.identical( _.avector.isFinite([ 1,3,NaN ]),false );
+  test.identical( _.avector.isFinite([ 1,NaN,3 ]),false );
+  test.identical( _.avector.isFinite([ 1,3,-Infinity ]),false );
+  test.identical( _.avector.isFinite([ 1,+Infinity,3 ]),false );
+
+  test.identical( _.avector.isFinite([ 1.1,0,1 ]),true );
+  test.identical( _.avector.isFinite([ 1,0,1.1 ]),true );
+
+}
+
+//
+
+function isNan( test )
+{
+
+  test.identical( _.avector.isNan([ 1,2,3 ]),false );
+  test.identical( _.avector.isNan([ 0,0,0 ]),false );
+  test.identical( _.avector.isNan([ 0,0,1 ]),false );
+
+  test.identical( _.avector.isNan([ 1,3,NaN ]),true );
+  test.identical( _.avector.isNan([ 1,NaN,3 ]),true );
+  test.identical( _.avector.isNan([ 1,3,-Infinity ]),false );
+  test.identical( _.avector.isNan([ 1,+Infinity,3 ]),false );
+
+  test.identical( _.avector.isNan([ 1.1,0,1 ]),false );
+  test.identical( _.avector.isNan([ 1,0,1.1 ]),false );
+
+}
+
+//
+
+function isInt( test )
+{
+
+  test.identical( _.avector.isInt([ 1,2,3 ]),true );
+  test.identical( _.avector.isInt([ 0,0,0 ]),true );
+  test.identical( _.avector.isInt([ 0,0,1 ]),true );
+
+  test.identical( _.avector.isInt([ 1,3,NaN ]),false );
+  test.identical( _.avector.isInt([ 1,NaN,3 ]),false );
+  test.identical( _.avector.isInt([ 1,3,-Infinity ]),true );
+  test.identical( _.avector.isInt([ 1,+Infinity,3 ]),true );
+
+  test.identical( _.avector.isInt([ 1.1,0,1 ]),false );
+  test.identical( _.avector.isInt([ 1,0,1.1 ]),false );
+
+}
+
+//
+
+function isZero( test )
+{
+
+  test.identical( _.avector.isZero([ 1,2,3 ]),false );
+  test.identical( _.avector.isZero([ 0,0,0 ]),true );
+  test.identical( _.avector.isZero([ 0,0,1 ]),false );
+
+  test.identical( _.avector.isZero([ 0,3,NaN ]),false );
+  test.identical( _.avector.isZero([ 0,NaN,3 ]),false );
+  test.identical( _.avector.isZero([ 0,3,-Infinity ]),false );
+  test.identical( _.avector.isZero([ 0,+Infinity,3 ]),false );
+
+  test.identical( _.avector.isZero([ 1.1,0,1 ]),false );
+  test.identical( _.avector.isZero([ 1,0,1.1 ]),false );
 
 }
 
@@ -159,7 +235,7 @@ function sort( test )
     [ 1,0,1,0 ],
     [ 0,1,0,1 ],
 
-    /*_.arrayFill({ times : 16 }).map( function(){ return Math.floor( Math.random() * 16 ) } ),*/
+    /*_.arrayFillTimes( [], 16 ).map( function(){ return Math.floor( Math.random() * 16 ) } ),*/
 
   ];
 
@@ -179,7 +255,6 @@ function sort( test )
 
 function dot( test )
 {
-  debugger;
 
   var a = [ 1,2,3,4 ];
   var b = [ 6,7,8,9 ];
@@ -221,20 +296,237 @@ function dot( test )
 
   test.description = 'bad arguments'; //
 
-  if( Config.debug )
-  {
+  if( !Config.debug )
+  return;
 
-    test.shouldThrowErrorSync( () => _.avector.dot( 1 ) );
-    test.shouldThrowErrorSync( () => _.avector.dot( [ 1 ],1 ) );
-    test.shouldThrowErrorSync( () => _.avector.dot( [ 1 ],[ 1,2,3 ] ) );
-    test.shouldThrowErrorSync( () => _.avector.dot( [ 1 ],undefined ) );
-    test.shouldThrowErrorSync( () => _.avector.dot( [ 1 ],[ 1 ],1 ) );
-    test.shouldThrowErrorSync( () => _.avector.dot( [ 1 ],[ 1 ],[ 1 ] ) );
-    test.shouldThrowErrorSync( () => _.avector.dot( [],function(){} ) );
-
-  }
+  test.shouldThrowErrorSync( () => _.avector.dot( 1 ) );
+  test.shouldThrowErrorSync( () => _.avector.dot( [ 1 ],1 ) );
+  test.shouldThrowErrorSync( () => _.avector.dot( [ 1 ],[ 1,2,3 ] ) );
+  test.shouldThrowErrorSync( () => _.avector.dot( [ 1 ],undefined ) );
+  test.shouldThrowErrorSync( () => _.avector.dot( [ 1 ],[ 1 ],1 ) );
+  test.shouldThrowErrorSync( () => _.avector.dot( [ 1 ],[ 1 ],[ 1 ] ) );
+  test.shouldThrowErrorSync( () => _.avector.dot( [],function(){} ) );
 
   debugger;
+}
+
+//
+
+function cross( test )
+{
+  debugger;
+
+  test.description = 'trivial, make new'; //
+
+  var a = [ 1,2,3 ];
+  var b = [ 4,5,6 ];
+  var expected = [ -3,+6,-3 ];
+  var got = _.avector.cross( null,a,b );
+  test.identical( got,expected );
+  test.shouldBe( got !== a );
+
+  test.description = 'zero, make new'; //
+
+  var a = [ 0,0,0 ];
+  var b = [ 0,0,0 ];
+  var expected = [ 0,0,0 ];
+  var got = _.avector.cross( null,a,b );
+  test.identical( got,expected );
+  test.shouldBe( got !== a );
+
+  test.description = 'same, make new'; //
+
+  var a = [ 1,1,1 ];
+  var b = [ 1,1,1 ];
+  var expected = [ 0,0,0 ];
+  var got = _.avector.cross( null,a,b );
+  test.identical( got,expected );
+  test.shouldBe( got !== a );
+
+  test.description = 'perpendicular1, make new'; //
+
+  var a = [ 1,0,0 ];
+  var b = [ 0,0,1 ];
+  var expected = [ 0,-1,0 ];
+  var got = _.avector.cross( null,a,b );
+  test.identical( got,expected );
+  test.shouldBe( got !== a );
+
+  test.description = 'perpendicular2, make new'; //
+
+  var a = [ 0,0,1 ];
+  var b = [ 1,0,0 ];
+  var expected = [ 0,+1,0 ];
+  var got = _.avector.cross( null,a,b );
+  test.identical( got,expected );
+  test.shouldBe( got !== a );
+
+  test.description = 'perpendicular3, make new'; //
+
+  var a = [ 1,0,0 ];
+  var b = [ 0,1,0 ];
+  var expected = [ 0,0,+1 ];
+  var got = _.avector.cross( null,a,b );
+  test.identical( got,expected );
+  test.shouldBe( got !== a );
+
+  test.description = 'perpendicular4, make new'; //
+
+  var a = [ 0,1,0 ];
+  var b = [ 1,0,0 ];
+  var expected = [ 0,0,-1 ];
+  var got = _.avector.cross( null,a,b );
+  test.identical( got,expected );
+  test.shouldBe( got !== a );
+
+  test.description = 'trivial'; ///
+
+  var a = [ 1,2,3 ];
+  var b = [ 4,5,6 ];
+  var expected = [ -3,+6,-3 ];
+  var got = _.avector.cross( a,b );
+  test.identical( got,expected );
+  test.shouldBe( got === a );
+
+  test.description = 'zero'; //
+
+  var a = [ 0,0,0 ];
+  var b = [ 0,0,0 ];
+  var expected = [ 0,0,0 ];
+  var got = _.avector.cross( a,b );
+  test.identical( got,expected );
+  test.shouldBe( got === a );
+
+  test.description = 'same'; //
+
+  var a = [ 1,1,1 ];
+  var b = [ 1,1,1 ];
+  var expected = [ 0,0,0 ];
+  var got = _.avector.cross( a,b );
+  test.identical( got,expected );
+  test.shouldBe( got === a );
+
+  test.description = 'perpendicular1'; //
+
+  var a = [ 1,0,0 ];
+  var b = [ 0,0,1 ];
+  var expected = [ 0,-1,0 ];
+  var got = _.avector.cross( a,b );
+  test.identical( got,expected );
+  test.shouldBe( got === a );
+
+  test.description = 'perpendicular2'; //
+
+  var a = [ 0,0,1 ];
+  var b = [ 1,0,0 ];
+  var expected = [ 0,+1,0 ];
+  var got = _.avector.cross( a,b );
+  test.identical( got,expected );
+  test.shouldBe( got === a );
+
+  test.description = 'perpendicular3'; //
+
+  var a = [ 1,0,0 ];
+  var b = [ 0,1,0 ];
+  var expected = [ 0,0,+1 ];
+  var got = _.avector.cross( a,b );
+  test.identical( got,expected );
+  test.shouldBe( got === a );
+
+  test.description = 'perpendicular4'; //
+
+  var a = [ 0,1,0 ];
+  var b = [ 1,0,0 ];
+  var expected = [ 0,0,-1 ];
+  var got = _.avector.cross( a,b );
+  test.identical( got,expected );
+  test.shouldBe( got === a );
+
+  test.description = 'trivial'; ///
+
+  var a = [ 1,2,3 ];
+  var b = [ 4,5,6 ];
+  var c = [ 7,8,9 ];
+  var expected = [ 78,6,-66 ];
+  var got = _.avector.cross( a,b,c );
+  test.identical( got,expected );
+  test.shouldBe( got === a );
+
+  test.description = 'zero'; //
+
+  var a = [ 0,0,0 ];
+  var b = [ 0,0,0 ];
+  var c = [ 7,8,9 ];
+  var expected = [ 0,0,0 ];
+  var got = _.avector.cross( a,b,c );
+  test.identical( got,expected );
+  test.shouldBe( got === a );
+
+  test.description = 'same'; //
+
+  var a = [ 1,1,1 ];
+  var b = [ 1,1,1 ];
+  var c = [ 7,8,9 ];
+  var expected = [ 0,0,0 ];
+  var got = _.avector.cross( a,b,c );
+  test.identical( got,expected );
+  test.shouldBe( got === a );
+
+  test.description = 'perpendicular1'; //
+
+  var a = [ 1,0,0 ];
+  var b = [ 0,0,1 ];
+  var c = [ 7,8,9 ];
+  var expected = [ -9,0,7 ];
+  var got = _.avector.cross( a,b,c );
+  test.identical( got,expected );
+  test.shouldBe( got === a );
+
+  test.description = 'perpendicular2'; //
+
+  var a = [ 0,0,1 ];
+  var b = [ 1,0,0 ];
+  var c = [ 7,8,9 ];
+  var expected = [ 9,0,-7 ];
+  var got = _.avector.cross( a,b,c );
+  test.identical( got,expected );
+  test.shouldBe( got === a );
+
+  test.description = 'perpendicular3'; //
+
+  var a = [ 1,0,0 ];
+  var b = [ 0,1,0 ];
+  var c = [ 7,8,9 ];
+  var expected = [ -8,7,0 ];
+  var got = _.avector.cross( a,b,c );
+  test.identical( got,expected );
+  test.shouldBe( got === a );
+
+  test.description = 'perpendicular4'; //
+
+  var a = [ 0,1,0 ];
+  var b = [ 1,0,0 ];
+  var c = [ 7,8,9 ];
+  var expected = [ 8,-7,0 ];
+  var got = _.avector.cross( a,b,c );
+  test.identical( got,expected );
+  test.shouldBe( got === a );
+
+  test.description = 'bad arguments'; ///
+
+  if( !Config.debug )
+  return;
+
+  test.shouldThrowErrorSync( () => _.avector.cross( 1 ) );
+  test.shouldThrowErrorSync( () => _.avector.cross( [ 1 ],1 ) );
+  test.shouldThrowErrorSync( () => _.avector.cross( [ 1 ],[ 1,2,3 ] ) );
+  test.shouldThrowErrorSync( () => _.avector.cross( undefined,[ 1,2,3 ],[ 1,2,3 ] ) );
+  test.shouldThrowErrorSync( () => _.avector.cross( null,[ 1,2,3 ] ) );
+  test.shouldThrowErrorSync( () => _.avector.cross( [ 1 ],undefined ) );
+  test.shouldThrowErrorSync( () => _.avector.cross( [ 1 ],[ 1 ],1 ) );
+  test.shouldThrowErrorSync( () => _.avector.cross( [ 1 ],[ 1 ],[ 1 ] ) );
+  test.shouldThrowErrorSync( () => _.avector.cross( [],function(){} ) );
+
 }
 
 //
@@ -242,7 +534,7 @@ function dot( test )
 function subarray( test )
 {
 
-  test.description = 'simplest'; //
+  test.description = 'trivial'; //
 
   var v = vec([ 1,2,3 ]);
   test.identical( v.subarray( 0,2 ),vec([ 1,2 ]) );
@@ -296,6 +588,899 @@ function subarray( test )
 
 //
 
+function add( test )
+{
+
+  test.description = 'vector vector, new dst'; //
+
+  var ins1 = [ 1,2,3 ];
+  var ins2 = [ 3,4,5 ];
+
+  var got = _.avector.add( null,ins1,ins2 );
+
+  test.identical( got,[ 4,6,8 ] );
+  test.identical( ins1,[ 1,2,3 ] );
+  test.identical( ins2,[ 3,4,5 ] );
+  test.shouldBe( got !== ins1 );
+
+  test.description = 'vector vector vector, new dst'; /* */
+
+  var ins1 = [ 1,2,3 ];
+  var ins2 = [ 3,4,5 ];
+  var ins3 = [ 10,20,30 ];
+
+  var got = _.avector.add( null,ins1,ins2,ins3 );
+
+  test.identical( got,[ 14,26,38 ] );
+  test.identical( ins1,[ 1,2,3 ] );
+  test.identical( ins2,[ 3,4,5 ] );
+  test.shouldBe( got !== ins1 );
+
+  test.description = 'scalar vector, new dst'; //
+
+  var ins1 = [ 1,2,3 ];
+  var ins2 = 10;
+
+  var got = _.avector.add( null,ins1,ins2 );
+
+  test.identical( got,[ 11,12,13 ] );
+  test.identical( ins1,[ 1,2,3 ] );
+  test.identical( ins2,10 );
+  test.shouldBe( got !== ins1 );
+
+  test.description = 'vector scalar vector, new dst'; /* */
+
+  var ins1 = [ 1,2,3 ];
+  var ins2 = 10;
+  var ins3 = [ 10,20,30 ];
+
+  var got = _.avector.add( null,ins1,ins2,ins3 );
+
+  test.identical( got,[ 21,32,43 ] );
+  test.identical( ins1,[ 1,2,3 ] );
+  test.identical( ins2,10 );
+  test.shouldBe( got !== ins1 );
+
+  test.description = 'scalar vector, new dst'; //
+
+  var ins1 = 10;
+  var ins2 = [ 1,2,3 ];
+
+  var got = _.avector.add( null,ins1,ins2 );
+
+  test.identical( got,[ 11,12,13 ] );
+  test.identical( ins1,10 );
+  test.identical( ins2,[ 1,2,3 ] );
+  test.shouldBe( got !== ins1 );
+
+  test.description = 'vector scalar vector, new dst'; /* */
+
+  var ins1 = 10;
+  var ins2 = [ 1,2,3 ];
+  var ins3 = [ 10,20,30 ];
+
+  var got = _.avector.add( null,ins1,ins2,ins3 );
+
+  test.identical( got,[ 21,32,43 ] );
+  test.identical( ins1,10 );
+  test.identical( ins2,[ 1,2,3 ] );
+  test.shouldBe( got !== ins1 );
+
+  test.description = 'scalar scalar, new dst'; //
+
+  var ins1 = 1;
+  var ins2 = 10;
+
+  var got = _.avector.add( null,ins1,ins2 );
+
+  test.identical( got,11 );
+  test.identical( ins1,1 );
+  test.identical( ins2,10 );
+  test.shouldBe( got !== ins1 );
+
+  test.description = 'scalar scalar scalar, new dst'; /* */
+
+  var ins1 = 1;
+  var ins2 = 10;
+  var ins3 = 100;
+
+  var got = _.avector.add( null,ins1,ins2,ins3 );
+
+  test.identical( got,111 );
+  test.identical( ins1,1 );
+  test.identical( ins2,10 );
+  test.shouldBe( got !== ins1 );
+
+  test.description = 'vector vector, first argument is dst'; ///
+
+  var ins1 = [ 1,2,3 ];
+  var ins2 = [ 3,4,5 ];
+
+  var got = _.avector.add( ins1,ins2 );
+
+  test.identical( got,[ 4,6,8 ] );
+  test.identical( ins2,[ 3,4,5 ] );
+  test.shouldBe( got === ins1 );
+
+  test.description = 'vector vector vector, first argument is dst'; /* */
+
+  var ins1 = [ 1,2,3 ];
+  var ins2 = [ 3,4,5 ];
+  var ins3 = [ 10,20,30 ];
+
+  var got = _.avector.add( ins1,ins2,ins3 );
+
+  test.identical( got,[ 14,26,38 ] );
+  test.identical( ins2,[ 3,4,5 ] );
+  test.shouldBe( got === ins1 );
+
+  test.description = 'scalar vector, first argument is dst'; //
+
+  var ins1 = [ 1,2,3 ];
+  var ins2 = 10;
+
+  var got = _.avector.add( ins1,ins2 );
+
+  test.identical( got,[ 11,12,13 ] );
+  test.identical( ins2,10 );
+  test.shouldBe( got === ins1 );
+
+  test.description = 'vector scalar vector, first argument is dst'; /* */
+
+  var ins1 = [ 1,2,3 ];
+  var ins2 = 10;
+  var ins3 = [ 10,20,30 ];
+
+  var got = _.avector.add( ins1,ins2,ins3 );
+
+  test.identical( got,[ 21,32,43 ] );
+  test.identical( ins2,10 );
+  test.shouldBe( got === ins1 );
+
+  test.description = 'scalar vector, first argument is dst'; //
+
+  var ins1 = 10;
+  var ins2 = [ 1,2,3 ];
+
+  var got = _.avector.add( ins1,ins2 );
+
+  test.identical( got,[ 11,12,13 ] );
+  test.identical( ins1,10 );
+  test.identical( ins2,[ 1,2,3 ] );
+
+  test.description = 'vector scalar vector, first argument is dst'; /* */
+
+  var ins1 = 10;
+  var ins2 = [ 1,2,3 ];
+  var ins3 = [ 10,20,30 ];
+
+  var got = _.avector.add( ins1,ins2,ins3 );
+
+  test.identical( got,[ 21,32,43 ] );
+  test.identical( ins1,10 );
+  test.identical( ins2,[ 1,2,3 ] );
+
+  test.description = 'scalar scalar, first argument is dst'; //
+
+  var ins1 = 1;
+  var ins2 = 10;
+
+  var got = _.avector.add( ins1,ins2 );
+
+  test.identical( got,11 );
+  test.identical( ins1,1 );
+  test.identical( ins2,10 );
+
+  test.description = 'scalar scalar scalar, first argument is dst'; /* */
+
+  var ins1 = 1;
+  var ins2 = 10;
+  var ins3 = 100;
+
+  var got = _.avector.add( ins1,ins2,ins3 );
+
+  test.identical( got,111 );
+  test.identical( ins1,1 );
+  test.identical( ins2,10 );
+
+  if( !Config.debug )
+  return;
+
+  test.description = 'bad arguments'; //
+
+  test.shouldThrowErrorSync( () => _.avector.add( [ 1,2,3 ],null ) );
+  test.shouldThrowErrorSync( () => _.avector.add( [ 1,2,3 ],[ 3,4,5 ],null ) );
+  test.shouldThrowErrorSync( () => _.avector.add( '1',[ 3,4,5 ],null ) );
+
+  test.shouldThrowErrorSync( () => _.avector.add( [ 0,0,0 ],[ 1,1 ] ) );
+  test.shouldThrowErrorSync( () => _.avector.add( [ 0,0 ],[ 1,1,1 ] ) );
+  test.shouldThrowErrorSync( () => _.avector.add( [ 0 ],[ 1,1,1 ] ) );
+
+}
+
+//
+
+function sub( test )
+{
+
+  test.description = 'vector vector, new dst'; //
+
+  var ins1 = [ 1,2,3 ];
+  var ins2 = [ 3,4,5 ];
+
+  var got = _.avector.sub( null,ins1,ins2 );
+
+  test.identical( got,[ -2,-2,-2 ] );
+  test.identical( ins1,[ 1,2,3 ] );
+  test.identical( ins2,[ 3,4,5 ] );
+  test.shouldBe( got !== ins1 );
+
+  test.description = 'vector vector vector, new dst'; /* */
+
+  var ins1 = [ 1,2,3 ];
+  var ins2 = [ 3,4,5 ];
+  var ins3 = [ 10,20,30 ];
+
+  var got = _.avector.sub( null,ins1,ins2,ins3 );
+
+  test.identical( got,[ -12,-22,-32 ] );
+  test.identical( ins1,[ 1,2,3 ] );
+  test.identical( ins2,[ 3,4,5 ] );
+  test.shouldBe( got !== ins1 );
+
+  test.description = 'scalar vector, new dst'; //
+
+  var ins1 = [ 1,2,3 ];
+  var ins2 = 10;
+
+  var got = _.avector.sub( null,ins1,ins2 );
+
+  test.identical( got,[ -9,-8,-7 ] );
+  test.identical( ins1,[ 1,2,3 ] );
+  test.identical( ins2,10 );
+  test.shouldBe( got !== ins1 );
+
+  test.description = 'vector scalar vector, new dst'; /* */
+
+  var ins1 = [ 1,2,3 ];
+  var ins2 = 10;
+  var ins3 = [ 10,20,30 ];
+
+  var got = _.avector.sub( null,ins1,ins2,ins3 );
+
+  test.identical( got,[ -19,-28,-37 ] );
+  test.identical( ins1,[ 1,2,3 ] );
+  test.identical( ins2,10 );
+  test.shouldBe( got !== ins1 );
+
+  test.description = 'scalar vector, new dst'; //
+
+  var ins1 = 10;
+  var ins2 = [ 1,2,3 ];
+
+  var got = _.avector.sub( null,ins1,ins2 );
+
+  test.identical( got,[ 9,8,7 ] );
+  test.identical( ins1,10 );
+  test.identical( ins2,[ 1,2,3 ] );
+  test.shouldBe( got !== ins1 );
+
+  test.description = 'vector scalar vector, new dst'; /* */
+
+  var ins1 = 10;
+  var ins2 = [ 1,2,3 ];
+  var ins3 = [ 10,20,30 ];
+
+  var got = _.avector.sub( null,ins1,ins2,ins3 );
+
+  test.identical( got,[ -1,-12,-23 ] );
+  test.identical( ins1,10 );
+  test.identical( ins2,[ 1,2,3 ] );
+  test.shouldBe( got !== ins1 );
+
+  test.description = 'scalar scalar, new dst'; //
+
+  var ins1 = 1;
+  var ins2 = 10;
+
+  var got = _.avector.sub( null,ins1,ins2 );
+
+  test.identical( got,-9 );
+  test.identical( ins1,1 );
+  test.identical( ins2,10 );
+  test.shouldBe( got !== ins1 );
+
+  test.description = 'scalar scalar scalar, new dst'; /* */
+
+  var ins1 = 1;
+  var ins2 = 10;
+  var ins3 = 100;
+
+  var got = _.avector.sub( null,ins1,ins2,ins3 );
+
+  test.identical( got,-109 );
+  test.identical( ins1,1 );
+  test.identical( ins2,10 );
+  test.shouldBe( got !== ins1 );
+
+  test.description = 'vector vector, first argument is dst'; ///
+
+  var ins1 = [ 1,2,3 ];
+  var ins2 = [ 3,4,5 ];
+
+  var got = _.avector.sub( ins1,ins2 );
+
+  test.identical( got,[ -2,-2,-2 ] );
+  test.identical( ins2,[ 3,4,5 ] );
+  test.shouldBe( got === ins1 );
+
+  test.description = 'vector vector vector, first argument is dst'; /* */
+
+  var ins1 = [ 1,2,3 ];
+  var ins2 = [ 3,4,5 ];
+  var ins3 = [ 10,20,30 ];
+
+  var got = _.avector.sub( ins1,ins2,ins3 );
+
+  test.identical( got,[ -12,-22,-32 ] );
+  test.identical( ins2,[ 3,4,5 ] );
+  test.shouldBe( got === ins1 );
+
+  test.description = 'scalar vector, first argument is dst'; //
+
+  var ins1 = [ 1,2,3 ];
+  var ins2 = 10;
+
+  var got = _.avector.sub( ins1,ins2 );
+
+  test.identical( got,[ -9,-8,-7 ] );
+  test.identical( ins2,10 );
+  test.shouldBe( got === ins1 );
+
+  test.description = 'vector scalar vector, first argument is dst'; /* */
+
+  var ins1 = [ 1,2,3 ];
+  var ins2 = 10;
+  var ins3 = [ 10,20,30 ];
+
+  var got = _.avector.sub( ins1,ins2,ins3 );
+
+  test.identical( got,[ -19,-28,-37 ] );
+  test.identical( ins2,10 );
+  test.shouldBe( got === ins1 );
+
+  test.description = 'scalar vector, first argument is dst'; //
+
+  var ins1 = 10;
+  var ins2 = [ 1,2,3 ];
+
+  var got = _.avector.sub( ins1,ins2 );
+
+  test.identical( got,[ 9,8,7 ] );
+  test.identical( ins1,10 );
+  test.identical( ins2,[ 1,2,3 ] );
+
+  test.description = 'vector scalar vector, first argument is dst'; /* */
+
+  var ins1 = 10;
+  var ins2 = [ 1,2,3 ];
+  var ins3 = [ 10,20,30 ];
+
+  var got = _.avector.sub( ins1,ins2,ins3 );
+
+  test.identical( got,[ -1,-12,-23 ] );
+  test.identical( ins1,10 );
+  test.identical( ins2,[ 1,2,3 ] );
+
+  test.description = 'scalar scalar, first argument is dst'; //
+
+  var ins1 = 1;
+  var ins2 = 10;
+
+  var got = _.avector.sub( ins1,ins2 );
+
+  test.identical( got,-9 );
+  test.identical( ins1,1 );
+  test.identical( ins2,10 );
+
+  test.description = 'scalar scalar scalar, first argument is dst'; /* */
+
+  var ins1 = 1;
+  var ins2 = 10;
+  var ins3 = 100;
+
+  var got = _.avector.sub( ins1,ins2,ins3 );
+
+  test.identical( got,-109 );
+  test.identical( ins1,1 );
+  test.identical( ins2,10 );
+
+  if( !Config.debug )
+  return;
+
+  test.description = 'bad arguments'; //
+
+  test.shouldThrowErrorSync( () => _.avector.sub( [ 1,2,3 ],null ) );
+  test.shouldThrowErrorSync( () => _.avector.sub( [ 1,2,3 ],[ 3,4,5 ],null ) );
+  test.shouldThrowErrorSync( () => _.avector.sub( '1',[ 3,4,5 ],null ) );
+  test.shouldThrowErrorSync( () => _.avector.sub( [ 0,0,0 ],[ 1,1 ] ) );
+  test.shouldThrowErrorSync( () => _.avector.sub( [ 0,0 ],[ 1,1,1 ] ) );
+  test.shouldThrowErrorSync( () => _.avector.sub( [ 0 ],[ 1,1,1 ] ) );
+
+}
+
+//
+
+function mul( test )
+{
+
+  test.description = 'vector vector, new dst'; //
+
+  var ins1 = [ 1,2,3 ];
+  var ins2 = [ 3,4,5 ];
+
+  var got = _.avector.mul( null,ins1,ins2 );
+
+  test.identical( got,[ 3,8,15 ] );
+  test.identical( ins1,[ 1,2,3 ] );
+  test.identical( ins2,[ 3,4,5 ] );
+  test.shouldBe( got !== ins1 );
+
+  test.description = 'vector vector vector, new dst'; /* */
+
+  var ins1 = [ 1,2,3 ];
+  var ins2 = [ 3,4,5 ];
+  var ins3 = [ 10,20,30 ];
+
+  var got = _.avector.mul( null,ins1,ins2,ins3 );
+
+  test.identical( got,[ 30,160,450 ] );
+  test.identical( ins1,[ 1,2,3 ] );
+  test.identical( ins2,[ 3,4,5 ] );
+  test.shouldBe( got !== ins1 );
+
+  test.description = 'scalar vector, new dst'; //
+
+  var ins1 = [ 1,2,3 ];
+  var ins2 = 10;
+
+  var got = _.avector.mul( null,ins1,ins2 );
+
+  test.identical( got,[ 10,20,30 ] );
+  test.identical( ins1,[ 1,2,3 ] );
+  test.identical( ins2,10 );
+  test.shouldBe( got !== ins1 );
+
+  test.description = 'vector scalar vector, new dst'; /* */
+
+  var ins1 = [ 1,2,3 ];
+  var ins2 = 10;
+  var ins3 = [ 10,20,30 ];
+
+  var got = _.avector.mul( null,ins1,ins2,ins3 );
+
+  test.identical( got,[ 100,400,900 ] );
+  test.identical( ins1,[ 1,2,3 ] );
+  test.identical( ins2,10 );
+  test.shouldBe( got !== ins1 );
+
+  test.description = 'scalar vector, new dst'; //
+
+  var ins1 = 10;
+  var ins2 = [ 1,2,3 ];
+
+  var got = _.avector.mul( null,ins1,ins2 );
+
+  test.identical( got,[ 10,20,30 ] );
+  test.identical( ins1,10 );
+  test.identical( ins2,[ 1,2,3 ] );
+  test.shouldBe( got !== ins1 );
+
+  test.description = 'vector scalar vector, new dst'; /* */
+
+  var ins1 = 10;
+  var ins2 = [ 1,2,3 ];
+  var ins3 = [ 10,20,30 ];
+
+  var got = _.avector.mul( null,ins1,ins2,ins3 );
+
+  test.identical( got,[ 100,400,900 ] );
+  test.identical( ins1,10 );
+  test.identical( ins2,[ 1,2,3 ] );
+  test.shouldBe( got !== ins1 );
+
+  test.description = 'scalar scalar, new dst'; //
+
+  var ins1 = 1;
+  var ins2 = 10;
+
+  var got = _.avector.mul( null,ins1,ins2 );
+
+  test.identical( got,10 );
+  test.identical( ins1,1 );
+  test.identical( ins2,10 );
+  test.shouldBe( got !== ins1 );
+
+  test.description = 'scalar scalar scalar, new dst'; /* */
+
+  var ins1 = 1;
+  var ins2 = 10;
+  var ins3 = 100;
+
+  var got = _.avector.mul( null,ins1,ins2,ins3 );
+
+  test.identical( got,1000 );
+  test.identical( ins1,1 );
+  test.identical( ins2,10 );
+  test.shouldBe( got !== ins1 );
+
+  test.description = 'vector vector, first argument is dst'; ///
+
+  var ins1 = [ 1,2,3 ];
+  var ins2 = [ 3,4,5 ];
+
+  var got = _.avector.mul( ins1,ins2 );
+
+  test.identical( got,[ 3,8,15 ] );
+  test.identical( ins2,[ 3,4,5 ] );
+  test.shouldBe( got === ins1 );
+
+  test.description = 'vector vector vector, first argument is dst'; /* */
+
+  var ins1 = [ 1,2,3 ];
+  var ins2 = [ 3,4,5 ];
+  var ins3 = [ 10,20,30 ];
+
+  var got = _.avector.mul( ins1,ins2,ins3 );
+
+  test.identical( got,[ 30,160,450 ] );
+  test.identical( ins2,[ 3,4,5 ] );
+  test.shouldBe( got === ins1 );
+
+  test.description = 'scalar vector, first argument is dst'; //
+
+  var ins1 = [ 1,2,3 ];
+  var ins2 = 10;
+
+  var got = _.avector.mul( ins1,ins2 );
+
+  test.identical( got,[ 10,20,30 ] );
+  test.identical( ins2,10 );
+  test.shouldBe( got === ins1 );
+
+  test.description = 'vector scalar vector, first argument is dst'; /* */
+
+  var ins1 = [ 1,2,3 ];
+  var ins2 = 10;
+  var ins3 = [ 10,20,30 ];
+
+  var got = _.avector.mul( ins1,ins2,ins3 );
+
+  test.identical( got,[ 100,400,900 ] );
+  test.identical( ins2,10 );
+  test.shouldBe( got === ins1 );
+
+  test.description = 'scalar vector, first argument is dst'; //
+
+  var ins1 = 10;
+  var ins2 = [ 1,2,3 ];
+
+  var got = _.avector.mul( ins1,ins2 );
+
+  test.identical( got,[ 10,20,30 ] );
+  test.identical( ins1,10 );
+  test.identical( ins2,[ 1,2,3 ] );
+
+  test.description = 'vector scalar vector, first argument is dst'; /* */
+
+  var ins1 = 10;
+  var ins2 = [ 1,2,3 ];
+  var ins3 = [ 10,20,30 ];
+
+  var got = _.avector.mul( ins1,ins2,ins3 );
+
+  test.identical( got,[ 100,400,900 ] );
+  test.identical( ins1,10 );
+  test.identical( ins2,[ 1,2,3 ] );
+
+  test.description = 'scalar scalar, first argument is dst'; //
+
+  var ins1 = 1;
+  var ins2 = 10;
+
+  var got = _.avector.mul( ins1,ins2 );
+
+  test.identical( got,10 );
+  test.identical( ins1,1 );
+  test.identical( ins2,10 );
+
+  test.description = 'scalar scalar scalar, first argument is dst'; /* */
+
+  var ins1 = 1;
+  var ins2 = 10;
+  var ins3 = 100;
+
+  var got = _.avector.mul( ins1,ins2,ins3 );
+
+  test.identical( got,1000 );
+  test.identical( ins1,1 );
+  test.identical( ins2,10 );
+
+  if( !Config.debug )
+  return;
+
+  test.description = 'bad arguments'; //
+
+  test.shouldThrowErrorSync( () => _.avector.mul( [ 1,2,3 ],null ) );
+  test.shouldThrowErrorSync( () => _.avector.mul( [ 1,2,3 ],[ 3,4,5 ],null ) );
+  test.shouldThrowErrorSync( () => _.avector.mul( '1',[ 3,4,5 ],null ) );
+  test.shouldThrowErrorSync( () => _.avector.mul( [ 0,0,0 ],[ 1,1 ] ) );
+  test.shouldThrowErrorSync( () => _.avector.mul( [ 0,0 ],[ 1,1,1 ] ) );
+  test.shouldThrowErrorSync( () => _.avector.mul( [ 0 ],[ 1,1,1 ] ) );
+
+}
+
+//
+
+function div( test )
+{
+
+  test.description = 'vector vector, new dst'; //
+
+  var ins1 = [ 1,2,3 ];
+  var ins2 = [ 3,4,5 ];
+
+  var got = _.avector.div( null,ins1,ins2 );
+
+  test.identical( got,[ 1/3,2/4,3/5 ] );
+  test.identical( ins1,[ 1,2,3 ] );
+  test.identical( ins2,[ 3,4,5 ] );
+  test.shouldBe( got !== ins1 );
+
+  test.description = 'vector vector vector, new dst'; /* */
+
+  var ins1 = [ 1,2,3 ];
+  var ins2 = [ 3,4,5 ];
+  var ins3 = [ 10,20,30 ];
+
+  var got = _.avector.div( null,ins1,ins2,ins3 );
+
+  test.identical( got,[ 1/3/10,2/4/20,3/5/30 ] );
+  test.identical( ins1,[ 1,2,3 ] );
+  test.identical( ins2,[ 3,4,5 ] );
+  test.shouldBe( got !== ins1 );
+
+  test.description = 'scalar vector, new dst'; //
+
+  var ins1 = [ 1,2,3 ];
+  var ins2 = 10;
+
+  var got = _.avector.div( null,ins1,ins2 );
+
+  test.identical( got,[ 1/10,2/10,3/10 ] );
+  test.identical( ins1,[ 1,2,3 ] );
+  test.identical( ins2,10 );
+  test.shouldBe( got !== ins1 );
+
+  test.description = 'vector scalar vector, new dst'; /* */
+
+  var ins1 = [ 1,2,3 ];
+  var ins2 = 10;
+  var ins3 = [ 10,20,30 ];
+
+  var got = _.avector.div( null,ins1,ins2,ins3 );
+
+  test.identical( got,[ 1/10/10,2/10/20,3/10/30 ] );
+  test.identical( ins1,[ 1,2,3 ] );
+  test.identical( ins2,10 );
+  test.shouldBe( got !== ins1 );
+
+  test.description = 'scalar vector, new dst'; //
+
+  var ins1 = 10;
+  var ins2 = [ 1,2,3 ];
+
+  var got = _.avector.div( null,ins1,ins2 );
+
+  test.identical( got,[ 10/1,10/2,10/3 ] );
+  test.identical( ins1,10 );
+  test.identical( ins2,[ 1,2,3 ] );
+  test.shouldBe( got !== ins1 );
+
+  test.description = 'vector scalar vector, new dst'; /* */
+
+  var ins1 = 10;
+  var ins2 = [ 1,2,3 ];
+  var ins3 = [ 10,20,30 ];
+
+  var got = _.avector.div( null,ins1,ins2,ins3 );
+
+  test.identical( got,[ 10/1/10,10/2/20,10/3/30 ] );
+  test.identical( ins1,10 );
+  test.identical( ins2,[ 1,2,3 ] );
+  test.shouldBe( got !== ins1 );
+
+  test.description = 'scalar scalar, new dst'; //
+
+  var ins1 = 1;
+  var ins2 = 10;
+
+  var got = _.avector.div( null,ins1,ins2 );
+
+  test.identical( got,1/10 );
+  test.identical( ins1,1 );
+  test.identical( ins2,10 );
+  test.shouldBe( got !== ins1 );
+
+  test.description = 'scalar scalar scalar, new dst'; /* */
+
+  var ins1 = 1;
+  var ins2 = 10;
+  var ins3 = 100;
+
+  var got = _.avector.div( null,ins1,ins2,ins3 );
+
+  test.identical( got,1/10/100 );
+  test.identical( ins1,1 );
+  test.identical( ins2,10 );
+  test.shouldBe( got !== ins1 );
+
+  test.description = 'vector vector, first argument is dst'; ///
+
+  var ins1 = [ 1,2,3 ];
+  var ins2 = [ 3,4,5 ];
+
+  var got = _.avector.div( ins1,ins2 );
+
+  test.identical( got,[ 1/3,2/4,3/5 ] );
+  test.identical( ins2,[ 3,4,5 ] );
+  test.shouldBe( got === ins1 );
+
+  test.description = 'vector vector vector, first argument is dst'; /* */
+
+  var ins1 = [ 1,2,3 ];
+  var ins2 = [ 3,4,5 ];
+  var ins3 = [ 10,20,30 ];
+
+  var got = _.avector.div( ins1,ins2,ins3 );
+
+  test.identical( got,[ 1/3/10,2/4/20,3/5/30 ] );
+  test.identical( ins2,[ 3,4,5 ] );
+  test.shouldBe( got === ins1 );
+
+  test.description = 'scalar vector, first argument is dst'; //
+
+  var ins1 = [ 1,2,3 ];
+  var ins2 = 10;
+
+  var got = _.avector.div( ins1,ins2 );
+
+  test.identical( got,[ 1/10,2/10,3/10 ] );
+  test.identical( ins2,10 );
+  test.shouldBe( got === ins1 );
+
+  test.description = 'vector scalar vector, first argument is dst'; /* */
+
+  var ins1 = [ 1,2,3 ];
+  var ins2 = 10;
+  var ins3 = [ 10,20,30 ];
+
+  var got = _.avector.div( ins1,ins2,ins3 );
+
+  test.identical( got,[ 1/10/10,2/10/20,3/10/30 ] );
+  test.identical( ins2,10 );
+  test.shouldBe( got === ins1 );
+
+  test.description = 'scalar vector, first argument is dst'; //
+
+  var ins1 = 10;
+  var ins2 = [ 1,2,3 ];
+
+  var got = _.avector.div( ins1,ins2 );
+
+  test.identical( got,[ 10/1,10/2,10/3 ] );
+  test.identical( ins1,10 );
+  test.identical( ins2,[ 1,2,3 ] );
+
+  test.description = 'vector scalar vector, first argument is dst'; /* */
+
+  var ins1 = 10;
+  var ins2 = [ 1,2,3 ];
+  var ins3 = [ 10,20,30 ];
+
+  var got = _.avector.div( ins1,ins2,ins3 );
+
+  test.identical( got,[ 10/1/10,10/2/20,10/3/30 ] );
+  test.identical( ins1,10 );
+  test.identical( ins2,[ 1,2,3 ] );
+
+  test.description = 'scalar scalar, first argument is dst'; //
+
+  var ins1 = 1;
+  var ins2 = 10;
+
+  var got = _.avector.div( ins1,ins2 );
+
+  test.identical( got,1/10 );
+  test.identical( ins1,1 );
+  test.identical( ins2,10 );
+
+  test.description = 'scalar scalar scalar, first argument is dst'; /* */
+
+  var ins1 = 1;
+  var ins2 = 10;
+  var ins3 = 100;
+
+  var got = _.avector.div( ins1,ins2,ins3 );
+
+  test.identical( got,1/10/100 );
+  test.identical( ins1,1 );
+  test.identical( ins2,10 );
+
+  if( !Config.debug )
+  return;
+
+  test.description = 'bad arguments'; //
+
+  test.shouldThrowErrorSync( () => _.avector.div( [ 1,2,3 ],null ) );
+  test.shouldThrowErrorSync( () => _.avector.div( [ 1,2,3 ],[ 3,4,5 ],null ) );
+  test.shouldThrowErrorSync( () => _.avector.div( '1',[ 3,4,5 ],null ) );
+  test.shouldThrowErrorSync( () => _.avector.div( [ 0,0,0 ],[ 1,1 ] ) );
+  test.shouldThrowErrorSync( () => _.avector.div( [ 0,0 ],[ 1,1,1 ] ) );
+  test.shouldThrowErrorSync( () => _.avector.div( [ 0 ],[ 1,1,1 ] ) );
+
+}
+
+//
+
+function mix( test )
+{
+
+  test.description = 'trivial';
+
+  var src = [ 1,2,3 ];
+  var got = _.avector.mix( src,5,0.1 );
+  var expected = [ 1.4 , 2.3 , 3.2 ];
+
+  test.equivalent( got,expected );
+  test.shouldBe( src === got );
+
+  var src = [ 1,2,3 ]
+  var got = _.avector.mix( 5,src,0.1 );
+  var expected = [ 4.6 , 4.7 , 4.8 ];
+
+  test.equivalent( got,expected );
+  test.shouldBe( src !== got );
+
+  test.description = 'many elements in progress';
+
+  var got = _.avector.mix( 1,3,[ -1,0,0.3,0.7,1,2 ] );
+  var expected = [ -1 , 1 , 1.6 , 2.4 , 3 , 5 ];
+  test.equivalent( got,expected );
+
+  test.description = 'only scalars';
+
+  var got = _.avector.mix( 1,3,0.5 );
+  var expected = 2;
+  test.equivalent( got,expected );
+
+  if( !Config.debug )
+  return;
+
+  test.shouldThrowErrorSync( () => _.avector.mix( [ 1,2 ],[ 3 ],0.5 ) );
+
+  test.shouldThrowErrorSync( () => _.avector.mix() );
+  test.shouldThrowErrorSync( () => _.avector.mix( [ 1,2 ] ) );
+  test.shouldThrowErrorSync( () => _.avector.mix( [ 1,2 ],[ 3,4 ] ) );
+  test.shouldThrowErrorSync( () => _.avector.mix( [ 1,2 ],[ 3,4 ],[ 5,6 ],1 ) );
+  test.shouldThrowErrorSync( () => _.avector.mix( '0',[ 3,4 ],[ 5,6 ] ) );
+  test.shouldThrowErrorSync( () => _.avector.mix( [ 1,2 ],'0',[ 5,6 ] ) );
+  test.shouldThrowErrorSync( () => _.avector.mix( [ 1,2 ],[ 3,4 ],'0' ) );
+
+}
+
+//
+
 function distributionRangeSummary( test )
 {
 
@@ -329,7 +1514,7 @@ function distributionRangeSummary( test )
   var got = vector.reduceToMax( vec( ar ) );
   test.identical( got,expected );
 
-  test.description = 'simplest'; //
+  test.description = 'trivial'; //
 
   var expected =
   {
@@ -444,71 +1629,73 @@ function distributionRangeSummary( test )
 
 //
 
-function reduceToAverage( test )
+function reduceToMean( test )
 {
 
   test.description = 'simple even'; //
 
   var expected = 2.5;
-  var got = _.avector.reduceToAverage([ 1,2,3,4 ]);
+  var got = _.avector.reduceToMean([ 1,2,3,4 ]);
   test.equivalent( got,expected );
 
   test.description = 'simple odd'; //
 
   var expected = 2;
-  var got = _.avector.reduceToAverage([ 1,2,3 ]);
+  var got = _.avector.reduceToMean([ 1,2,3 ]);
   test.equivalent( got,expected );
 
   test.description = 'several vectors'; //
 
   var expected = 3;
-  var got = _.avector.reduceToAverage( [ 1,2,3 ],[ 4,5 ] );
+  var got = _.avector.reduceToMean( [ 1,2,3 ],[ 4,5 ] );
   test.equivalent( got,expected );
 
   test.description = 'empty'; //
 
   var expected = NaN;
-  var got = _.avector.reduceToAverage([]);
+  var got = _.avector.reduceToMean([]);
   test.equivalent( got,expected );
 
   test.description = 'simple even, filtering'; //
 
   var expected = 2;
-  var got = _.avector.reduceToAverageFiltering( [ 1,2,3,4 ],( e,op ) => e % 2 );
+  debugger;
+  var got = _.avector.reduceToMeanFiltering( [ 1,2,3,4 ],( e,op ) => e % 2 );
+  debugger;
   test.equivalent( got,expected );
 
   test.description = 'simple odd, filtering'; //
 
   var expected = 2;
-  var got = _.avector.reduceToAverageFiltering( [ 1,2,3 ],( e,op ) => e % 2 );
+  var got = _.avector.reduceToMeanFiltering( [ 1,2,3 ],( e,op ) => e % 2 );
   test.equivalent( got,expected );
 
   test.description = 'several vectors, filtering'; //
 
   var expected = 3;
-  var got = _.avector.reduceToAverageFiltering( [ 1,2,3 ],[ 4,5 ],( e,op ) => e % 2 );
+  var got = _.avector.reduceToMeanFiltering( [ 1,2,3 ],[ 4,5 ],( e,op ) => e % 2 );
   test.equivalent( got,expected );
 
   test.description = 'empty, filtering'; //
 
   var expected = NaN;
-  var got = _.avector.reduceToAverageFiltering( [],( e,op ) => e % 2 );
+  var got = _.avector.reduceToMeanFiltering( [],( e,op ) => e % 2 );
   test.equivalent( got,expected );
 
   test.description = 'bad arguments'; //
 
-  test.shouldThrowErrorSync( () => _.reduceToAverage() );
-  test.shouldThrowErrorSync( () => _.reduceToAverage( 'x' ) );
-  test.shouldThrowErrorSync( () => _.reduceToAverage( 1 ) );
-  test.shouldThrowErrorSync( () => _.reduceToAverage( [ 1 ],'x' ) );
-  test.shouldThrowErrorSync( () => _.reduceToAverage( [ 1 ],1 ) );
+  test.shouldThrowErrorSync( () => _.avector.reduceToMean() );
+  test.shouldThrowErrorSync( () => _.avector.reduceToMean( 'x' ) );
+  test.shouldThrowErrorSync( () => _.avector.reduceToMean( 1 ) );
+  test.shouldThrowErrorSync( () => _.avector.reduceToMean( [ 1 ],'x' ) );
+  test.shouldThrowErrorSync( () => _.avector.reduceToMean( [ 1 ],1 ) );
 
-  test.shouldThrowErrorSync( () => _.reduceToAverageFiltering() );
-  test.shouldThrowErrorSync( () => _.reduceToAverageFiltering( () => true ) );
-  test.shouldThrowErrorSync( () => _.reduceToAverageFiltering( 'x',() => true ) );
-  test.shouldThrowErrorSync( () => _.reduceToAverageFiltering( 1,() => true ) );
-  test.shouldThrowErrorSync( () => _.reduceToAverageFiltering( [ 1 ],'x',() => true ) );
-  test.shouldThrowErrorSync( () => _.reduceToAverageFiltering( [ 1 ],1,() => true ) );
+  test.shouldThrowErrorSync( () => _.avector.reduceToMeanFiltering() );
+  test.shouldThrowErrorSync( () => _.avector.reduceToMeanFiltering( () => true ) );
+  test.shouldThrowErrorSync( () => _.avector.reduceToMeanFiltering( 'x',() => true ) );
+  test.shouldThrowErrorSync( () => _.avector.reduceToMeanFiltering( 1,() => true ) );
+  test.shouldThrowErrorSync( () => _.avector.reduceToMeanFiltering( [ 1 ],'x',() => true ) );
+  test.shouldThrowErrorSync( () => _.avector.reduceToMeanFiltering( [ 1 ],1,() => true ) );
 
 }
 
@@ -983,7 +2170,7 @@ function atomParrallelWithScalar( test )
 
     test.shouldThrowErrorSync( () => _.avector[ name ]() );
     test.shouldThrowErrorSync( () => _.avector[ name ]( 1 ) );
-    test.shouldThrowErrorSync( () => _.avector[ name ]( 1,3 ) );
+    // test.shouldThrowErrorSync( () => _.avector[ name ]( 1,3 ) );
     test.shouldThrowErrorSync( () => _.avector[ name ]( '1','3' ) );
     test.shouldThrowErrorSync( () => _.avector[ name ]( [],[] ) );
     test.shouldThrowErrorSync( () => _.avector[ name ]( [],1,3 ) );
@@ -992,7 +2179,7 @@ function atomParrallelWithScalar( test )
 
     test.shouldThrowErrorSync( () => _.vector[ name ]() );
     test.shouldThrowErrorSync( () => _.vector[ name ]( 1 ) );
-    test.shouldThrowErrorSync( () => _.vector[ name ]( 1,3 ) );
+    // test.shouldThrowErrorSync( () => _.vector[ name ]( 1,3 ) );
     test.shouldThrowErrorSync( () => _.vector[ name ]( '1','3' ) );
     test.shouldThrowErrorSync( () => _.vector[ name ]( [],[] ) );
     test.shouldThrowErrorSync( () => _.vector[ name ]( [],1,3 ) );
@@ -1614,29 +2801,130 @@ function swap( test )
 function polynomApply( test )
 {
 
-  test.description = 'simple'; //
+  test.description = 'trivial'; //
 
   var expected = 7;
   var got = _.avector.polynomApply( [ 1,1,1 ],2 );
   test.identical( got,expected );
 
-  test.description = 'simple'; //
+  test.description = 'trivial'; //
 
   var expected = 36;
   var got = _.avector.polynomApply( [ 0,1,2 ],4 );
   test.identical( got,expected );
 
-  test.description = 'simple'; //
+  test.description = 'trivial'; //
 
   var expected = 6;
   var got = _.avector.polynomApply( [ 2,1,0 ],4 );
   test.identical( got,expected );
 
-  test.description = 'simple'; //
+  test.description = 'trivial'; //
 
   var expected = 262;
   var got = _.avector.polynomApply( [ 2,1,0,4 ],4 );
   test.identical( got,expected );
+
+}
+
+//
+
+function set( test )
+{
+
+  test.description = 'set scalar';
+
+  var src = [ 1,2,3 ];
+  var got = _.avector.assign( src,0 );
+  var expected = [ 0,0,0 ];
+  test.identical( expected,got );
+  test.shouldBe( got === src );
+
+  test.description = 'set scalar to null vector';
+
+  var src = [];
+  var got = _.avector.assign( src,1 );
+  var expected = [];
+  test.identical( expected,got );
+  test.shouldBe( got === src );
+
+  test.description = 'set avector';
+
+  var src = [ 1,2,3 ];
+  var got = _.avector.assign( src,[ 4,5,6 ] );
+  var expected = [ 4,5,6 ];
+  test.identical( expected,got );
+  test.shouldBe( got === src );
+
+  test.description = 'set multiple scalars';
+
+  var src = [ 1,2,3 ];
+  var got = _.avector.assign( src,4,5,6 );
+  var expected = [ 4,5,6 ];
+  test.identical( expected,got );
+  test.shouldBe( got === src );
+
+  test.description = 'null avector';
+
+  var src = [];
+  var got = _.avector.assign( src );
+  var expected = [];
+  test.identical( expected,got );
+  test.shouldBe( got === src );
+
+  /* */
+
+  test.description = 'assign scalar by method';
+
+  var src = vector.fromArray([ 1,2,3 ]);
+  debugger;
+  var got = src.assign( 0 );
+  var expected = vector.fromArray([ 0,0,0 ]);
+  test.identical( expected,got );
+  test.shouldBe( got === src );
+
+  test.description = 'assign scalar to null vector';
+
+  var src = vector.fromArray([]);
+  var got = src.assign( 1 );
+  var expected = vector.fromArray([]);
+  test.identical( expected,got );
+  test.shouldBe( got === src );
+
+  test.description = 'assign avector';
+
+  var src = vector.fromArray([ 1,2,3 ]);
+  var got = src.assign([ 4,5,6 ] );
+  var expected = vector.fromArray([ 4,5,6 ]);
+  test.identical( expected,got );
+  test.shouldBe( got === src );
+
+  test.description = 'assign multiple scalars';
+
+  var src = vector.fromArray([ 1,2,3 ]);
+  var got = src.assign([ 4,5,6 ]);
+  var expected = vector.fromArray([ 4,5,6 ]);
+  test.identical( expected,got );
+  test.shouldBe( got === src );
+
+  test.description = 'null avector';
+
+  var src = vector.fromArray([]);
+  var got = src.assign();
+  var expected = vector.fromArray([]);
+  test.identical( expected,got );
+  test.shouldBe( got === src );
+
+  /* */
+
+  if( !Config.debug )
+  return;
+
+  test.shouldThrowErrorSync( () => _.avector.assign() );
+  test.shouldThrowErrorSync( () => _.avector.assign( [],1,1 ) );
+  test.shouldThrowErrorSync( () => _.avector.assign( [ 0 ],1,1 ) );
+  test.shouldThrowErrorSync( () => _.avector.assign( [ 0 ],'1' ) );
+  test.shouldThrowErrorSync( () => _.avector.assign( [ 0 ],[ 1,1 ] ) );
 
 }
 
@@ -1662,21 +2950,37 @@ var Self =
 {
 
   name : 'VectorTest',
-  verbosity : 7,
+  silencing : 1,
+  // routine : 'set',
+  // verbosity : 7,
   // debug : 1,
 
   tests :
   {
 
     vectorIs : vectorIs,
+
+    isFinite : isFinite,
+    isNan : isNan,
+    isInt : isInt,
+    isZero : isZero,
+
     to : to,
 
     sort : sort,
     dot : dot,
+    cross : cross,
     subarray : subarray,
 
+    add : add,
+    sub : sub,
+    mul : mul,
+    div : div,
+
+    mix : mix,
+
     distributionRangeSummary : distributionRangeSummary,
-    reduceToAverage : reduceToAverage,
+    reduceToMean : reduceToMean,
     median : median,
     mean : mean,
     moment : moment,
@@ -1688,6 +2992,8 @@ var Self =
 
     swap : swap,
     polynomApply : polynomApply,
+
+    set : set,
 
     experiment : experiment,
 

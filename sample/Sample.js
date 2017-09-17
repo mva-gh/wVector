@@ -1,9 +1,6 @@
 
 if( typeof module !== 'undefined' )
-{
-  require( 'wvector' );
-  // require( '../staging/amath/cvector/nArray.s' );
-}
+require( 'wvector' );
 
 var _ = wTools;
 var a1 = [ 1,2,5,9 ];
