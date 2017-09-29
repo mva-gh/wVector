@@ -123,6 +123,59 @@ function slice( b,e )
 
 //
 
+function slicedArray( b,e )
+{
+  var self = this;
+
+  _.assert( arguments.length <= 2 );
+  _.assert( _.vectorIs( self ) );
+
+  return vector.slicedArray( self,b,e );
+}
+
+//
+
+function slicedVector( b,e )
+{
+  var self = this;
+
+  _.assert( arguments.length <= 2 );
+  _.assert( _.vectorIs( self ) );
+
+  return vector.slicedVector( self,b,e );
+}
+
+//
+
+function resizedArray( first,last,val )
+{
+  var self = this;
+  _.assert( arguments.length <= 3 );
+  var result = vector.resizedArray( self,first,last,val );
+  return result;
+}
+
+//
+
+function resizedVector( first,last,val )
+{
+  var self = this;
+  _.assert( arguments.length <= 3 );
+  var result = vector.resizedVector( self,first,last,val );
+  return result;
+}
+
+//
+
+function subarray( first,last )
+{
+  var self = this;
+  _.assert( arguments.length === 1 || arguments.length === 2 );
+  return vector.subarray( self,first,last );
+}
+
+//
+
 function toArray()
 {
   var self = this;
@@ -144,15 +197,6 @@ function toStr( o )
   _.assert( _.vectorIs( self ) );
 
   return vector._toStr( self,o );
-}
-
-//
-
-function subarray( first,last )
-{
-  var self = this;
-  _.assert( arguments.length === 1 || arguments.length === 2 );
-  return vector.subarray( self,first,last );
 }
 
 //
@@ -288,10 +332,18 @@ var Proto =
   copy : copy,
 
   makeSimilar : makeSimilar,
+
   slice : slice,
-  toArray : toArray,
-  toStr : toStr,
+  slicedArray : slicedArray,
+  slicedVector : slicedVector,
+
+  resizedArray : resizedArray,
+  resizedVector : resizedVector,
+
   subarray : subarray,
+
+  // toArray : toArray,
+  toStr : toStr,
 
   equalWith : equalWith,
   identicalWith : identicalWith,
@@ -303,8 +355,6 @@ var Proto =
 }
 
 _.mapExtend( Self.prototype,Proto );
-_.assert( wTools.Vector.prototype.toArray );
-
 
 // --
 // declare
@@ -315,17 +365,19 @@ function declareSingleArgumentRoutine( routine, r )
 
   var op = routine.operation;
 
-  // if( r === 'reduceToMean' )
+  // if( r === 'allZero' )
   // debugger;
 
-  var absLike = op.returningOnly === 'self' && op.modifying && op.atomWise && op.commutative;
-  var reduceToScalarLike = op.returningOnly === 'number' && !op.modifying && op.atomWise && op.commutative;
+  var absLike = op.returningOnly === 'self' && op.modifying && op.atomWise && op.homogeneous;
+  var reduceToScalarLike = op.returningOnly === 'atomic' && !op.modifying && op.atomWise && op.homogeneous;
 
-  var singleArgument = _.arrayIdentical( op.takingArguments, [ 1,1 ] ) && _.arrayIdentical( op.takingVectors, [ 1,1 ] );
-  var oneOrTwoArguments = _.arrayIdentical( op.takingArguments, [ 1,2 ] ) && _.arrayIdentical( op.takingVectors, [ 1,2 ] );
-  var oneOrInfinity = _.arrayIdentical( op.takingArguments, [ 1,Infinity ] ) && _.arrayIdentical( op.takingVectors, [ 1,Infinity ] );
+  var singleArgument = _.arrayIdentical( op.takingArguments, [ 1,1 ] );
+  var oneOrTwoArguments = _.arrayIdentical( op.takingArguments, [ 1,2 ] );
+  var oneOrInfinity = _.arrayIdentical( op.takingArguments, [ 1,Infinity ] );
 
-  if( !singleArgument && ( !absLike || !oneOrTwoArguments ) && ( !reduceToScalarLike || !oneOrInfinity ) )
+  var doesFit = singleArgument || ( absLike && oneOrTwoArguments ) || ( reduceToScalarLike && ( singleArgument || oneOrInfinity ) );
+
+  if( !doesFit )
   return false;
 
   _.assert( Self.prototype[ r ] === undefined );
@@ -382,9 +434,13 @@ for( var r in routines )
 _.assert( Self.prototype.mag );
 _.assert( Self.prototype.magSqr );
 
+_.assert( Self.prototype.toArray );
+
 _.assert( Self.prototype.abs );
 _.assert( Self.prototype.makeSimilar );
 _.assert( Self.prototype.assign );
 _.assert( Self.prototype.slice );
+
+_.assert( Self.prototype.allZero );
 
 })();

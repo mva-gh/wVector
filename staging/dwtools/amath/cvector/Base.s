@@ -213,7 +213,13 @@ _.constant( VectorSub.prototype,
 function fromSubArray( srcArray,offset,length )
 {
 
-  _.assert( arguments.length === 3 );
+  if( offset === undefined )
+  offset = 0;
+
+  if( length === undefined )
+  length = srcArray.length-offset;
+
+  _.assert( arguments.length === 2 || arguments.length === 3 );
   _.assert( srcArray );
   _.assert( offset+length <= srcArray.length );
 
@@ -464,6 +470,8 @@ function withWrapper( o )
   }
 
   vectorWrap.notMethod = notMethod;
+  vectorWrap.operation = op;
+
   return vectorWrap;
 }
 
@@ -525,9 +533,10 @@ _.assert( Self.array.makeArrayOfLength );
 
 if( typeof module !== 'undefined' )
 {
-  require( './cVectorOperations.s' );
-  require( './cVectorRoutines.s' );
-  require( './mVectorMethods.s' );
+  require( './dOperations.s' );
+  require( './eRoutines.s' );
+  require( './fMethods.s' );
+  require( './vArray.s' );
 }
 
 })();

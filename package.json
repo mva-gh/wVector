@@ -16,10 +16,6 @@
     "staging/dwtools/amath",
     "production"
   ],
-  "directories": {
-    "doc": "doc",
-    "main": "staging/dwtools/amath/cvector/nArray.s"
-  },
   "scripts": {
     "test": "wtest staging",
     "make_doc": "x"

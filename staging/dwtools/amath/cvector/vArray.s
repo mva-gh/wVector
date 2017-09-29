@@ -1,4 +1,4 @@
-(function _vAvector_s_() {
+(function _vArray_s_() {
 
 'use strict';
 
@@ -14,7 +14,7 @@ if( typeof module !== 'undefined' )
     require( 'wTools' );
   }
 
-  require( './cVector.s' );
+  require( './Base.s' );
 
 }
 
@@ -61,7 +61,7 @@ for( var r in routines )
   {
     var op = theRoutine.operation;
 
-    if( op.returningNumber && _.numberIs( result ) )
+    if( op.returningAtomic && _.atomicIs( result ) )
     {
       return result;
     }
@@ -69,14 +69,13 @@ for( var r in routines )
     {
       return result.toArray();
     }
-    else if( op.returningNew )
+    else if( op.returningNew && _.vectorIs( result ) )
     {
       return result.toArray();
     }
     else if( op.returningArray )
     {
-      if( !_.arrayIs( result ) && !_.bufferTypedIs( result ) )
-      throw _.err( 'unexpected' );
+      _.assert( _.arrayIs( result ) || _.bufferTypedIs( result ),'unexpected' );
       return result;
     }
     else return result;
@@ -113,6 +112,6 @@ _.assert( _.avector.withArray.Float32 );
 _.assert( Object.getPrototypeOf( Self ) === wTools );
 _.assert( _.objectIs( _row.RoutinesMathematical ) );
 _.assert( !_.avector.isValid );
-_.assert( _.avector.isFinite );
+_.assert( _.avector.allFinite );
 
 })();
