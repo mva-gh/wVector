@@ -1,0 +1,93 @@
+Вектор може бути представлений у двох видах:
+
+avector - у вигляді одновимірного масиву, який автоматично перетворюється у вектор в момент виконання матем. операцій.
+vector - у вигляді обгортки над ```avector```, яка використовує переданий при створенні масив( avector ) як контейнер для зберігання даних.
+
+Виконання базових математичний операцій над векторами з допомогою wVector відобразимо на прикладі операції додавання:
+
+Слід зазначити що для кожного представлення векторів необхідно використовувати окрему реалізація рутини add.
+Для векторів у вигляді одновимірного масиву avector - wTools.avector.add.
+Для обгортки vector - wTools.vector.add.
+
+Додавання векторів типу avector та збереження результату у першому векторі:
+
+```javascript
+var a1 = [ 1, 2, 3 ];
+var a2 = [ 1, 2, 3 ];
+var a3 = [ 1, 2, 3 ];
+var avector = wTools.avector.add( a1, a2, a3 );
+console.log( 'avector: ', avector );
+console.log( 'a1:', a1 );
+```
+
+Додавання векторів типу avector та скалярів:
+Якщо аргументом є скаляр його буде перетворено у вектор, а передане число заповнить його до необхідної довжини.
+
+```javascript
+var a1 = [ 0, 0, 0 ];
+var a2 = [ 0, 0, 0 ];
+var a3 =  5;
+var a4 =  7;
+var vector = wTools.avector.add( a1, a2, a3, a4 );
+console.log( 'avector: ', avector );
+console.log( 'a1:', a1 );
+```
+
+Додавання авекторів та  скалярів із збереженням результату у новому векторі:
+Якщо першим аргументом є скаляр або null, результат додавання буде повернуто у новому векторі:
+
+```javascript
+var a1 = [ 0, 0, 0 ];
+var a2 = [ 0, 0, 0 ];
+var a3 =  5;
+var a4 =  7;
+var vector = wTools.avector.add( null, a1, a2, a3, a4 );
+console.log( 'avector: ', avector );
+console.log( 'a1:', a1 );
+```
+
+Зручність використання вектора обгортки заключається в можливості використання єдиного масиву як контейнеру що зберігає дані кожного із векторів:
+В реалізації даної можливості нам допоможе рутина fromSubArray, яка створює вектор на основі певної частини переданого контейнера.
+
+```javascript
+var a = [ 0, 0, 1, 1, 2, 2 ];
+
+var v1Offset = 0;
+var v1Length = 3;
+var v1 = wTools.vector.fromSubArray( a, v1Offset, v1Length );
+
+var v2Offset = v1Length;
+var v2Length = 3;
+var v2 = wTools.vector.fromSubArray( a, v2Offset, v2Length );
+
+var vector = wTools.vector.add( v1, v2 );
+
+console.log( 'vector: ', vector );
+console.log( 'v1: ', v1 );
+console.log( 'a: ', a );
+```
+
+Для використання всього масиву як контейнеру використаємо рутину from:
+```javascript
+var avector = [ 1, 2, 3 ];
+var vector = wTools.vector.from( avector );
+console.log( vector )
+```
+
+Для доступу до даних із обгортки необхідно використати рутини eGet та eSet:
+
+Для отримання значення n-го елементу вектору викликаємо eGet:
+```javascript
+var avector = [ 1, 2, 3 ];
+var vector = wTools.vector.from( avector );
+console.log( vector.eGet( 0 ) )
+```
+
+Для зміни значення n-го елементу вектору викликаємо eSet:
+```javascript
+var avector = [ 1, 2, 3 ];
+var vector = wTools.vector.from( avector );
+vector.eSet( 0, 5 );
+console.log( avector )
+```
+

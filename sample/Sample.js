@@ -8,7 +8,7 @@ var _ = wTools;
 
 var a1 = [ 1,2,5,9 ];
 var a2 = [ 1,2,3,4 ];
-_.avector.addVectors( a1,a2 );
+_.avector.add( a1,a2 );
 console.log( 'add 2 avectors' );
 console.log( 'a1',a1 );
 console.log( 'a2',a2 );
@@ -23,7 +23,7 @@ var a1 = [ 1,2,5,9 ];
 var a2 = [ 1,2,3,4 ];
 var v1 = _.vector.from( a1 );
 var v2 = _.vector.from( a2 );
-_.vector.addVectors( v1,v2 );
+_.vector.add( v1,v2 );
 console.log( 'add 2 vectors made from arrays' );
 console.log( 'a1',a1 );
 console.log( 'a2',a2 );
@@ -37,7 +37,7 @@ a2 [ 1, 2, 3, 4 ]
 var a = [ 0,1,2,5,9,0,0,1,2,3,4,0 ];
 var v1 = _.vector.fromSubArray( a,1,4 );
 var v2 = _.vector.fromSubArray( a,7,4 );
-_.vector.addVectors( v1,v2 );
+_.vector.add( v1,v2 );
 console.log( 'add 2 vectors made from single array' );
 console.log( 'v1',v1.toStr() );
 console.log( 'v2',v2.toStr() );
