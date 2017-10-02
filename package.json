@@ -11,7 +11,7 @@
     }
   ],
   "license": "MIT",
-  "main": "staging/dwtools/amath/cvector/nArray.s",
+  "main": "staging/dwtools/amath/cvector/vArray.s",
   "files": [
     "staging/dwtools/amath",
     "production"

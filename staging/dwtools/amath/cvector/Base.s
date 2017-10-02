@@ -121,7 +121,7 @@ function fromMaybeNumber( number,length )
 function from( srcArray )
 {
 
-  _.assert( arguments.length === 1 );
+  _.assert( arguments.length === 1,'from expects single arguments { srcArray }' );
 
   if( _.vectorIs( srcArray ) )
   return srcArray;
