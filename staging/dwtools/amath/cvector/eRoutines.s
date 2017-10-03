@@ -2079,7 +2079,7 @@ function _operationTakingDstSrcReturningSelfComponentWise_functor( o )
 
 var inv = _operationTakingDstSrcReturningSelfComponentWise_functor
 ({
-  onEach : function inv( dst,src,i )
+  onEach : function _inv( dst,src,i )
   {
     dst.eSet( i, 1 / src.eGet( i ) );
   }
@@ -2089,7 +2089,7 @@ var inv = _operationTakingDstSrcReturningSelfComponentWise_functor
 
 var invOrOne = _operationTakingDstSrcReturningSelfComponentWise_functor
 ({
-  onEach : function invOrOne( dst,src,i )
+  onEach : function _invOrOne( dst,src,i )
   {
     if( src.eGet( i ) === 0 )
     dst.eSet( i,1 );
@@ -2102,7 +2102,7 @@ var invOrOne = _operationTakingDstSrcReturningSelfComponentWise_functor
 
 var floorRoutine = _operationTakingDstSrcReturningSelfComponentWise_functor
 ({
-  onEach : function floor( dst,src,i )
+  onEach : function _floor( dst,src,i )
   {
     dst.eSet( i, Math.floor( src.eGet( i ) ) );
   }
@@ -2112,7 +2112,7 @@ var floorRoutine = _operationTakingDstSrcReturningSelfComponentWise_functor
 
 var ceilRoutine = _operationTakingDstSrcReturningSelfComponentWise_functor
 ({
-  onEach : function ceil( dst,src,i )
+  onEach : function _ceil( dst,src,i )
   {
     dst.eSet( i, Math.ceil( src.eGet( i ) ) );
   }
@@ -2122,9 +2122,9 @@ var ceilRoutine = _operationTakingDstSrcReturningSelfComponentWise_functor
 
 var absRoutine = _operationTakingDstSrcReturningSelfComponentWise_functor
 ({
-  onEach : function abs( dst,src,i )
+  onEach : function _abs( dst,src,i )
   {
-    dst.eSet( i, abs( src.eGet( i ) ) );
+    dst.eSet( i, Math.abs( src.eGet( i ) ) );
   }
 });
 
@@ -2132,7 +2132,7 @@ var absRoutine = _operationTakingDstSrcReturningSelfComponentWise_functor
 
 var roundRoutine = _operationTakingDstSrcReturningSelfComponentWise_functor
 ({
-  onEach : function round( dst,src,i )
+  onEach : function _round( dst,src,i )
   {
     debugger;
     dst.eSet( i, Math.round( src.eGet( i ) ) );

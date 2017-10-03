@@ -3063,6 +3063,23 @@ function div( test )
 
 //
 
+function abs( test )
+{
+
+  test.description = 'trivial';
+
+  var expected = [ 1,2,3 ];
+  var dst = [ -1,-2,-3 ];
+  debugger;
+  var got = _.avector.abs( dst );
+
+  test.identical( got,expected );
+  test.shouldBe( dst === got );
+
+}
+
+//
+
 function distributionRangeSummary( test )
 {
 
@@ -5003,7 +5020,7 @@ var Self =
   name : 'VectorTest',
   silencing : 1,
 
-  // routine : 'sub',
+  // routine : 'abs',
   // verbosity : 7,
 
   context :
@@ -5085,6 +5102,8 @@ var Self =
     sub : sub,
     mul : mul,
     div : div,
+
+    abs : abs,
 
     distributionRangeSummary : distributionRangeSummary,
     reduceToMean : reduceToMean,
