@@ -1182,9 +1182,484 @@ function _noneIdentical( test,r,t,array )
 
 //
 
+function _allNotIdentical( test,r,t,array )
+{
+  var f = !t;
+
+  /* */
+
+  test.description = ' trivial'; /* */
+  var expected = f;
+  var got = _.avector[ r ]( array( 1,2,3 ),array( 4,5,6 ) );
+  test.identical( got,expected );
+  var expected = t;
+  var got = _.avector[ r ]( array( 1,2,3 ),array( 1,2,3 ) );
+  test.identical( got,expected );
+
+  test.description = 'vector and scalar'; /* */
+  var expected = f;
+  var got = _.avector[ r ]( array( 1,2,3 ),4 );
+  test.identical( got,expected );
+  var expected = t;
+  var got = _.avector[ r ]( 3,array( 3,3,3 ) );
+  test.identical( got,expected );
+
+  test.description = 'scalar and scalar'; /* */
+  var expected = t;
+  var got = _.avector[ r ]( 3,3 );
+  test.identical( got,expected );
+  var expected = f;
+  var got = _.avector[ r ]( 3,4 );
+  test.identical( got,expected );
+
+  test.description = 'empty vectors'; /* */
+  var expected = f;
+  var got = _.avector[ r ]( array(),array() );
+  test.identical( got,expected );
+
+}
+
+//
+
+function allNotIdentical( test )
+{
+  this._allNotIdentical( test,'allNotIdentical',false,function()
+  {
+    return _.arrayMakeSimilar( Array,arguments );
+  });
+
+  this._allNotIdentical( test,'allNotIdentical',false,function()
+  {
+    return _.arrayMakeSimilar( Float32Array,arguments );
+  });
+
+  this._allNotIdentical( test,'allNotIdentical',false,function()
+  {
+    return _.arrayMakeSimilar( Uint32Array,arguments );
+  });
+}
+
+//
+
+function _allEquivalent( test,r,t,Array,array )
+{
+  var f = !t;
+  var e = _.EPS * 0.5;
+
+  /* */
+
+  test.description = 'trivial'; /* */
+  var expected = f;
+  var got = _.avector[ r ]( array( 1,2,3 ),array( 3,4,3 ) );
+  test.identical( got,expected );
+  var expected = t
+  var got = _.avector[ r ]( array( 1,2,3 ),array( 1 + e, 2 + e, 3 + e ) );
+  test.identical( got,expected );
+
+  if( Array !== Uint32Array )
+  {
+
+    test.description = 'very close, positive elements'; /* */
+    var expected = t;
+    debugger;
+    var got = _.avector[ r ]( array( 0+e,1+e,1001+e,0-e,1-e,1001-e ),array( -0,+1,+1001,-0,+1,+1001 ) );
+    test.identical( got,expected );
+
+    test.description = 'very close, negative elements'; /* */
+    var expected = t;
+    var got = _.avector[ r ]( array( -0+e,-1+e,-1001+e,-0-e,-1-e,-1001-e ),array( +0,-1,-1001,+0,-1,-1001 ) );
+    test.identical( got,expected );
+
+  }
+
+  test.description = 'very close, scalars'; /* */
+  var expected = t;
+  var got = _.avector[ r ]( 1+e,1 );
+  test.identical( got,expected );
+  var expected = t;
+  var got = _.avector[ r ]( 1-e,1 );
+  test.identical( got,expected );
+  var expected = t;
+  var got = _.avector[ r ]( 1,1+e );
+  test.identical( got,expected );
+  var expected = t;
+  var got = _.avector[ r ]( 1,1-e );
+  test.identical( got,expected );
+
+}
+
+//
+
+function allEquivalent( test )
+{
+  this._allEquivalent( test,'allEquivalent',true,Array,function()
+  {
+    return _.arrayMakeSimilar( Array,arguments );
+  });
+
+  this._allEquivalent( test,'allEquivalent',true,Float32Array,function()
+  {
+    return _.arrayMakeSimilar( Float32Array,arguments );
+  });
+
+  this._allEquivalent( test,'allEquivalent',true,Uint32Array,function()
+  {
+    return _.arrayMakeSimilar( Uint32Array,arguments );
+  });
+}
+
+//
+
+function allEquivalent2( test )
+{
+  this._allIdentical( test,'allEquivalent',true,function()
+  {
+    return _.arrayMakeSimilar( Array,arguments );
+  });
+
+  this._allIdentical( test,'allEquivalent',true,function()
+  {
+    return _.arrayMakeSimilar( Float32Array,arguments );
+  });
+
+  this._allIdentical( test,'allEquivalent',true,function()
+  {
+    return _.arrayMakeSimilar( Uint32Array,arguments );
+  });
+}
+
+//
+
+function allNotEquivalent( test )
+{
+  this._allNotIdentical( test,'allNotEquivalent',false,function()
+  {
+    return _.arrayMakeSimilar( Array,arguments );
+  });
+
+  this._allNotIdentical( test,'allNotEquivalent',false,function()
+  {
+    return _.arrayMakeSimilar( Float32Array,arguments );
+  });
+
+  this._allNotIdentical( test,'allNotEquivalent',false,function()
+  {
+    return _.arrayMakeSimilar( Uint32Array,arguments );
+  });
+}
+
+//
+
+function _allGreater( test,r,t,array )
+{
+  var f = !t;
+
+  /* */
+
+  test.description = ' trivial'; /* */
+  var expected = f;
+  var got = _.avector[ r ]( array( 1,2,3 ),array( 3,4,3 ) );
+  test.identical( got,expected );
+  var expected = t;
+  var got = _.avector[ r ]( array( 2,2,9 ),array( 1,1,8 ) );
+  test.identical( got,expected );
+
+  test.description = 'vector and scalar'; /* */
+  var expected = f;
+  var got = _.avector[ r ]( array( 1,2,3 ),3 );
+  test.identical( got,expected );
+
+  var expected = t;
+  var got = _.avector[ r ]( 2,array( 1,1,1 ) );
+  test.identical( got,expected );
+
+  test.description = 'scalar and scalar'; /* */
+  var expected = t;
+  var got = _.avector[ r ]( 4,3 );
+  test.identical( got,expected );
+  var expected = f;
+  var got = _.avector[ r ]( 3,4 );
+  test.identical( got,expected );
+
+  test.description = 'bad arguments'; /* */
+
+  if( !Config.debug )
+  return;
+
+  test.shouldThrowErrorSync( () => _.avector[ r ]() );
+  test.shouldThrowErrorSync( () => _.avector[ r ]( 10 ) );
+  test.shouldThrowErrorSync( () => _.avector[ r ]( undefined,3,4 ) );
+  test.shouldThrowErrorSync( () => _.avector[ r ]( '1',3,4 ) );
+  test.shouldThrowErrorSync( () => _.avector[ r ]( [ 3 ] ) );
+  test.shouldThrowErrorSync( () => _.avector[ r ]( [ 3 ],[ 4 ],[ 5 ],[ 6 ] ) );
+  test.shouldThrowErrorSync( () => _.avector[ r ]( [ 3,4 ],[ 4 ],[ 5 ] ) );
+  test.shouldThrowErrorSync( () => _.avector[ r ]( [ 3 ],[ 4 ],[ 5,3 ] ) );
+  test.shouldThrowErrorSync( () => _.avector[ r ]( [ 3 ],[ 4,3 ] ) );
+  test.shouldThrowErrorSync( () => _.avector[ r ]( [ 3,3 ],[ 4 ] ) );
+
+}
+
+//
+
+function allGreater( test )
+{
+  this._allGreater( test,'allGreater',true,function()
+  {
+    return _.arrayMakeSimilar( Array,arguments );
+  });
+
+  this._allGreater( test,'allGreater',true,function()
+  {
+    return _.arrayMakeSimilar( Float32Array,arguments );
+  });
+
+  this._allGreater( test,'allGreater',true,function()
+  {
+    return _.arrayMakeSimilar( Uint32Array,arguments );
+  });
+}
+
+//
+
+function _anyNotIdentical( test,r,t,array )
+{
+  var f = !t;
+
+  /* */
+
+  test.description = ' trivial'; /* */
+  var expected = f;
+  var got = _.avector[ r ]( array( 1,2,3 ),array( 1,2,4 ) );
+  test.identical( got,expected );
+  var expected = t;
+  var got = _.avector[ r ]( array( 1,2,3 ),array( 1,2,3 ) );
+  test.identical( got,expected );
+
+  test.description = 'vector and scalar'; /* */
+  var expected = f;
+  var got = _.avector[ r ]( array( 1,2,3 ),3 );
+  test.identical( got,expected );
+  var expected = t;
+  var got = _.avector[ r ]( 3,array( 3,3,3 ) );
+  test.identical( got,expected );
+
+  test.description = 'scalar and scalar'; /* */
+  var expected = t;
+  var got = _.avector[ r ]( 3,3 );
+  test.identical( got,expected );
+  var expected = f;
+  var got = _.avector[ r ]( 3,4 );
+  test.identical( got,expected );
+
+  test.description = 'empty vectors'; /* */
+  var expected = f;
+  var got = _.avector[ r ]( array(),array() );
+  test.identical( got,expected );
+
+}
+
+//
+
+function anyNotIdentical( test )
+{
+  this._anyNotIdentical( test,'anyNotIdentical',false,function()
+  {
+    return _.arrayMakeSimilar( Array,arguments );
+  });
+
+  this._anyNotIdentical( test,'anyNotIdentical',false,function()
+  {
+    return _.arrayMakeSimilar( Float32Array,arguments );
+  });
+
+  this._anyNotIdentical( test,'anyNotIdentical',false,function()
+  {
+    return _.arrayMakeSimilar( Uint32Array,arguments );
+  });
+}
+
+//
+
+function _anyEquivalent( test,r,t,Array,array )
+{
+  var f = !t;
+  var e = _.EPS * 0.5;
+
+  /* */
+
+  test.description = 'trivial'; /* */
+  var expected = f;
+  var got = _.avector[ r ]( array( 1,2,5 ),array( 3,4,3 ) );
+  test.identical( got,expected );
+  var expected = t
+  var got = _.avector[ r ]( array( 1,2,3 ),array( 1, 2, 3 + e ) );
+  test.identical( got,expected );
+
+  if( Array !== Uint32Array )
+  {
+
+    test.description = 'very close, positive elements'; /* */
+    var expected = t;
+    debugger;
+    var got = _.avector[ r ]( array( 0,1,1001,0,1,1001-e ),array( 0,1,1001,0,1,+1001 ) );
+    test.identical( got,expected );
+
+    test.description = 'very close, negative elements'; /* */
+    var expected = t;
+    var got = _.avector[ r ]( array( 0,1,1001,0,1,-1001-e ),array( 0,1,1001,0,1,-1001 ) );
+    test.identical( got,expected );
+
+  }
+
+  test.description = 'very close, scalars'; /* */
+  var expected = t;
+  var got = _.avector[ r ]( 1+e,1 );
+  test.identical( got,expected );
+  var expected = t;
+  var got = _.avector[ r ]( 1-e,1 );
+  test.identical( got,expected );
+  var expected = t;
+  var got = _.avector[ r ]( 1,1+e );
+  test.identical( got,expected );
+  var expected = t;
+  var got = _.avector[ r ]( 1,1-e );
+  test.identical( got,expected );
+
+}
+
+function anyEquivalent( test )
+{
+  this._anyEquivalent( test,'anyEquivalent',true,Array,function()
+  {
+    return _.arrayMakeSimilar( Array,arguments );
+  });
+
+  this._anyEquivalent( test,'anyEquivalent',true,Float32Array,function()
+  {
+    return _.arrayMakeSimilar( Float32Array,arguments );
+  });
+
+  this._anyEquivalent( test,'anyEquivalent',true,Uint32Array,function()
+  {
+    return _.arrayMakeSimilar( Uint32Array,arguments );
+  });
+}
+
+//
+
+function anyEquivalent2( test )
+{
+  this._anyIdentical( test,'anyEquivalent',true,function()
+  {
+    return _.arrayMakeSimilar( Array,arguments );
+  });
+
+  this._anyIdentical( test,'anyEquivalent',true,function()
+  {
+    return _.arrayMakeSimilar( Float32Array,arguments );
+  });
+
+  this._anyIdentical( test,'anyEquivalent',true,function()
+  {
+    return _.arrayMakeSimilar( Uint32Array,arguments );
+  });
+}
+
+//
+
+function anyNotEquivalent( test )
+{
+  this._anyNotIdentical( test,'anyNotEquivalent',false,function()
+  {
+    return _.arrayMakeSimilar( Array,arguments );
+  });
+
+  this._anyNotIdentical( test,'anyNotEquivalent',false,function()
+  {
+    return _.arrayMakeSimilar( Float32Array,arguments );
+  });
+
+  this._anyNotIdentical( test,'anyNotEquivalent',false,function()
+  {
+    return _.arrayMakeSimilar( Uint32Array,arguments );
+  });
+}
+
+//
+
+function _anyGreater( test,r,t,array )
+{
+  var f = !t;
+
+  /* */
+
+  test.description = ' trivial'; /* */
+  var expected = f;
+  var got = _.avector[ r ]( array( 1,2,3 ),array( 3,4,3 ) );
+  test.identical( got,expected );
+  var expected = t;
+  var got = _.avector[ r ]( array( 1,1,9 ),array( 1,1,8 ) );
+  test.identical( got,expected );
+
+  test.description = 'vector and scalar'; /* */
+  var expected = t;
+  var got = _.avector[ r ]( array( 1,2,4 ),3 );
+  test.identical( got,expected );
+
+  var expected = f;
+  var got = _.avector[ r ]( 2,array( 3,3,3 ) );
+  test.identical( got,expected );
+
+  test.description = 'scalar and scalar'; /* */
+  var expected = t;
+  var got = _.avector[ r ]( 4,3 );
+  test.identical( got,expected );
+  var expected = f;
+  var got = _.avector[ r ]( 3,4 );
+  test.identical( got,expected );
+
+  test.description = 'bad arguments'; /* */
+
+  if( !Config.debug )
+  return;
+
+  test.shouldThrowErrorSync( () => _.avector[ r ]() );
+  test.shouldThrowErrorSync( () => _.avector[ r ]( 10 ) );
+  test.shouldThrowErrorSync( () => _.avector[ r ]( undefined,3,4 ) );
+  test.shouldThrowErrorSync( () => _.avector[ r ]( '1',3,4 ) );
+  test.shouldThrowErrorSync( () => _.avector[ r ]( [ 3 ] ) );
+  test.shouldThrowErrorSync( () => _.avector[ r ]( [ 3 ],[ 4 ],[ 5 ],[ 6 ] ) );
+  test.shouldThrowErrorSync( () => _.avector[ r ]( [ 3,4 ],[ 4 ],[ 5 ] ) );
+  test.shouldThrowErrorSync( () => _.avector[ r ]( [ 3 ],[ 4 ],[ 5,3 ] ) );
+  test.shouldThrowErrorSync( () => _.avector[ r ]( [ 3 ],[ 4,3 ] ) );
+  test.shouldThrowErrorSync( () => _.avector[ r ]( [ 3,3 ],[ 4 ] ) );
+
+}
+
+//
+
+function anyGreater( test )
+{
+  this._anyGreater( test,'anyGreater',true,function()
+  {
+    return _.arrayMakeSimilar( Array,arguments );
+  });
+
+  this._anyGreater( test,'anyGreater',true,function()
+  {
+    return _.arrayMakeSimilar( Float32Array,arguments );
+  });
+
+  this._anyGreater( test,'anyGreater',true,function()
+  {
+    return _.arrayMakeSimilar( Uint32Array,arguments );
+  });
+}
+
+//
+
 function noneIdentical( test )
 {
-
   this._noneIdentical( test,'noneIdentical',true,function()
   {
     return _.arrayMakeSimilar( Array,arguments );
@@ -1199,7 +1674,106 @@ function noneIdentical( test )
   {
     return _.arrayMakeSimilar( Uint32Array,arguments );
   });
+}
 
+//
+
+function noneNotIdentical( test )
+{
+  this._allIdentical( test,'noneNotIdentical',true,function()
+  {
+    return _.arrayMakeSimilar( Array,arguments );
+  });
+
+  this._allIdentical( test,'noneNotIdentical',true,function()
+  {
+    return _.arrayMakeSimilar( Float32Array,arguments );
+  });
+
+  this._allIdentical( test,'noneNotIdentical',true,function()
+  {
+    return _.arrayMakeSimilar( Uint32Array,arguments );
+  });
+}
+
+//
+
+function noneEquivalent( test )
+{
+  this._anyEquivalent( test,'noneEquivalent',false,Array,function()
+  {
+    return _.arrayMakeSimilar( Array,arguments );
+  });
+
+  this._anyEquivalent( test,'noneEquivalent',false,Float32Array,function()
+  {
+    return _.arrayMakeSimilar( Float32Array,arguments );
+  });
+
+  this._anyEquivalent( test,'noneEquivalent',false,Uint32Array,function()
+  {
+    return _.arrayMakeSimilar( Uint32Array,arguments );
+  });
+}
+
+//
+
+function noneEquivalent2( test )
+{
+  this._noneIdentical( test,'noneIdentical',true,function()
+  {
+    return _.arrayMakeSimilar( Array,arguments );
+  });
+
+  this._noneIdentical( test,'noneIdentical',true,function()
+  {
+    return _.arrayMakeSimilar( Float32Array,arguments );
+  });
+
+  this._noneIdentical( test,'noneIdentical',true,function()
+  {
+    return _.arrayMakeSimilar( Uint32Array,arguments );
+  });
+}
+
+//
+
+function noneNotEquivalent( test )
+{
+  this._allIdentical( test,'noneNotEquivalent',true,function()
+  {
+    return _.arrayMakeSimilar( Array,arguments );
+  });
+
+  this._allIdentical( test,'noneNotEquivalent',true,function()
+  {
+    return _.arrayMakeSimilar( Float32Array,arguments );
+  });
+
+  this._allIdentical( test,'noneNotEquivalent',true,function()
+  {
+    return _.arrayMakeSimilar( Uint32Array,arguments );
+  });
+}
+
+//
+
+function noneGreater( test )
+{
+  this._allGreater( test,'noneGreater',false,function()
+  {
+    return _.arrayMakeSimilar( Array,arguments );
+  });
+
+  this._allGreater( test,'noneGreater',false,function()
+  {
+    return _.arrayMakeSimilar( Float32Array,arguments );
+  });
+
+  this._allGreater( test,'noneGreater',false,function()
+  {
+    return _.arrayMakeSimilar( Uint32Array,arguments );
+  });
 }
 
 //
@@ -5032,7 +5606,15 @@ var Self =
     _isLess : _isLess,
 
     _allIdentical : _allIdentical,
+    _allNotIdentical : _allNotIdentical,
+    _allEquivalent : _allEquivalent,
+    _allGreater : _allGreater,
+
     _anyIdentical : _anyIdentical,
+    _anyNotIdentical : _anyNotIdentical,
+    _anyGreater : _anyGreater,
+    _anyEquivalent : _anyEquivalent,
+
     _noneIdentical : _noneIdentical,
 
     _isZero : _isZero,
@@ -5072,8 +5654,26 @@ var Self =
     /* */
 
     allIdentical : allIdentical,
+    allNotIdentical : allNotIdentical,
+    allEquivalent : allEquivalent,
+    allEquivalent2 : allEquivalent2,
+    allNotEquivalent : allNotEquivalent,
+    allGreater : allGreater,
+
     anyIdentical : anyIdentical,
+    anyNotIdentical : anyNotIdentical,
+    anyEquivalent : anyEquivalent,
+    anyEquivalent2 : anyEquivalent2,
+    anyNotEquivalent : anyNotEquivalent,
+    anyGreater : anyGreater,
+
     noneIdentical : noneIdentical,
+    noneNotIdentical : noneNotIdentical,
+    noneEquivalent : noneEquivalent,
+    noneEquivalent2 : noneEquivalent2,
+    noneNotEquivalent : noneNotEquivalent,
+    noneGreater : noneGreater,
+
 
     logical2ArgsReducerWithBadArguments : logical2ArgsReducerWithBadArguments,
 
