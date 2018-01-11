@@ -3,62 +3,155 @@ require( 'wvector' );
 
 var _ = wTools;
 
-/* add 2 avectors */
+//
 
 var a1 = [ 1, 2, 3 ];
-var a2 = [ 1, 2, 3 ];
-var a3 = [ 1, 2, 3 ];
-var avector = wTools.avector.add( a1, a2, a3 );
-console.log( 'avector: ', avector );
-console.log( 'a1:', a1 );
-
-/* add 2 avectors and scalar */
-
-var a1 = [ 0, 0, 0 ];
-var a2 = [ 0, 0, 0 ];
-var a3 =  5;
-var a4 =  7;
-var avector = wTools.avector.add( a1, a2, a3, a4 );
-console.log( 'avector: ', avector );
-console.log( 'a1:', a1 );
-
-/* saving add result to new avector */
-
-var a1 = [ 0, 0, 0 ];
-var a2 = [ 0, 0, 0 ];
-var a3 =  5;
-var a4 =  7;
-var vector = wTools.avector.add( null, a1, a2, a3, a4 );
-console.log( 'avector: ', avector );
-console.log( 'a1:', a1 );
-
-/* using vector wrapper and single avector as container */
-
-var a = [ 0, 0, 1, 1, 2, 2 ];
-
-var v1Offset = 0;
-var v1Length = 3;
-var v1 = wTools.vector.fromSubArray( a, v1Offset, v1Length );
-
-var v2Offset = v1Length;
-var v2Length = 3;
-var v2 = wTools.vector.fromSubArray( a, v2Offset, v2Length );
-
-wTools.vector.add( v1, v2 );
-
+var v1 = wTools.vector.from( a1 );
 console.log( 'v1: ', v1 );
-console.log( 'v2: ', v2 );
-console.log( 'a: ', a );
+console.log( 'v1.toStr(): ', v1.toStr() );
 
-/* vector wrapper from avector */
+/* v1:  VectorFromArray { _vectorBuffer: [ 1, 2, 3 ] } */
 
-var avector = [ 1, 2, 3 ];
-var vector = wTools.vector.from( avector );
-console.log( vector )
+//
 
-/* setting and getting data from container through vector wrapper */
+var a1 = [ 1, 2, 3 ];
+var v1 = wTools.vector.from( a1 );
+console.log( 'v1.length: ', v1.length )
+console.log( 'a1.length: ', a1.length )
 
-var avector = [ 1, 2, 3 ];
-var vector = wTools.vector.from( avector );
-vector.eSet( 0, 5 );
-console.log( vector.eGet( 0 ) )
+/*
+  v1.length:  3
+  a1.length:  3
+*/
+
+//
+
+var a1 = [ 1, 2, 3 ];
+var v1 = wTools.vector.from( a1 );
+console.log( 'v1: ', v1 );
+console.log( 'v1.toStr(): ',  v1.toStr() );
+
+/* v1.toStr():  1.000 2.000 3.000 */
+
+//
+
+var a1 = [ 1, 2, 3 ];
+var v1 = wTools.vector.from( a1 );
+console.log( 'v1.eGet( 2 ): ', v1.eGet( 2 ) );
+
+/* v1.eGet( 2 ):  3 */
+
+//
+
+var a1 = [ 1, 2, 3 ];
+var v1 = wTools.vector.from( a1 );
+v1.eSet( 0, 5 );
+console.log( 'v1.toStr(): ',  v1.toStr() );
+
+/* v1.toStr():  5.000 2.000 3.000 */
+
+//
+
+var a1 = [ -1, -1, -1 ];
+var v1 = wTools.vector.from( a1 )
+wTools.vector.abs( v1 );
+console.log( 'v1.toStr(): ',  v1.toStr() );
+console.log( 'a1: ', a1 );
+
+/*
+  v1.toStr():  1.000 1.000 1.000
+  a1:  [ 1, 1, 1 ]
+*/
+
+//
+
+var a1 = [ 1, 1, 1 ];
+var a2 = [ 1, 1, 1 ];
+var v1 = wTools.vector.from( a1 );
+var v2 = wTools.vector.from( a2 );
+var result = wTools.vector.add( v1, v2 );
+console.log( 'result.toStr(): ', result.toStr() );
+
+/*
+  result.toStr():  2.000 2.000 2.000
+*/
+
+//
+
+var a1 = [ 1, 1, 1 ];
+var a2 = [ 1, 1, 1 ];
+var a3 = [ 1, 1, 1 ];
+var v1 = wTools.vector.from( a1 );
+var v2 = wTools.vector.from( a2 );
+var v3 = wTools.vector.from( a3 );
+var result = wTools.vector.add( v1, v2, v3 );
+console.log( 'result.toStr(): ', result.toStr() );
+
+/*
+  result.toStr():  3.000 3.000 3.000
+*/
+
+//
+
+var a1 = [ 1, 1, 1 ];
+var a2 = [ 1, 1, 1 ];
+var v1 = wTools.vector.from( a1 );
+var v2 = wTools.vector.from( a2 );
+wTools.vector.add( v2, v1 );
+console.log( 'v2.toStr(): ', v2.toStr() );
+
+/* v2.toStr():  2.000 2.000 2.000 */
+
+//
+
+var a1 = [ 1, 1, 1 ];
+var a2 = [ 1, 1, 1 ];
+var v1 = wTools.vector.from( a1 );
+var v2 = wTools.vector.from( a2 );
+var result = wTools.vector.add( null, v1, v2 );
+console.log( 'result: ', result.toStr() );
+console.log( 'v1.toStr(): ', v1.toStr() );
+console.log( 'v2.toStr(): ', v2.toStr() );
+
+/*
+  result.toStr():  2.000 2.000 2.000
+  v1.toStr():  1.000 1.000 1.000
+  v2.toStr():  1.000 1.000 1.000
+*/
+
+//
+
+var a1 = [ 1, 1 ];
+var v1 = wTools.vector.from( a1 );
+wTools.vector.add( v1, 3 );
+console.log( 'v1.toStr(): ', v1.toStr() );
+
+/*
+  v1.toStr():  4.000 4.000
+*/
+
+//
+
+var a1 = [ 1, 1 ];
+var a2 = [ 1, 1, 1 ];
+var v1 = wTools.vector.from( a1 );
+var v2 = wTools.vector.from( a2 );
+try
+{
+  wTools.vector.add( v1, v2 );
+}
+catch( err )
+{
+  console.log( err );
+}
+
+//
+
+var a1 = [ 1, 1, 1 ];
+var a2 = [ 1, 1, 1 ];
+wTools.avector.add( a1, a2 );
+console.log( 'a1: ', a1 );
+
+/*
+  a1:  [ 2, 2, 2 ]
+*/
