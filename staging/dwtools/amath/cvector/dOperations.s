@@ -26,7 +26,7 @@ var EPS2 = _.EPS2;
 var Parent = null;
 var vector = wTools.vector;
 var Self = vector.operations = vector.operations || Object.create( null );
-var op;
+var dop;
 
 // --
 //
@@ -72,18 +72,18 @@ function operationNormalize2( operation )
 // atomWiseSingler
 // --
 
-var inv = op = Object.create( null );
+var inv = dop = Object.create( null );
 
-inv.onAtom = function inv( o )
+dop.onAtom = function inv( o )
 {
   o.dstElement = 1 / o.srcElement;
 }
 
 //
 
-var invOrOne = op = Object.create( null );
+var invOrOne = dop = Object.create( null );
 
-invOrOne.onAtom = function invOrOne( o )
+dop.onAtom = function invOrOne( o )
 {
   if( o.srcElement === 0 )
   o.dstElement = 1;
@@ -93,30 +93,85 @@ invOrOne.onAtom = function invOrOne( o )
 
 //
 
-var floorOperation = op = Object.create( null );
+var floorOperation = dop = Object.create( null );
 
-floorOperation.onAtom = function floor( o )
+dop.onAtom = function floor( o )
 {
   o.dstElement = _floor( o.srcElement );
 }
 
 //
 
-var ceilOperation = op = Object.create( null );
+var ceilOperation = dop = Object.create( null );
 
-ceilOperation.onAtom = function ceil( o )
+dop.onAtom = function ceil( o )
 {
   o.dstElement = _ceil( o.srcElement );
 }
 
 //
 
-var roundOperation = op = Object.create( null );
+var roundOperation = dop = Object.create( null );
 
-roundOperation.onAtom = function round( o )
+dop.onAtom = function round( o )
 {
   debugger;
   o.dstElement = _round( o.srcElement );
+}
+
+//
+
+var floorOperation = dop = Object.create( null );
+
+dop.onAtom = function floor( o )
+{
+  o.dstElement = _floor( o.srcElement );
+}
+
+//
+
+var ceilOperation = dop = Object.create( null );
+
+dop.onAtom = function ceil( o )
+{
+  o.dstElement = _ceil( o.srcElement );
+}
+
+//
+
+var roundOperation = dop = Object.create( null );
+
+dop.onAtom = function round( o )
+{
+  debugger;
+  o.dstElement = _round( o.srcElement );
+}
+
+//
+
+var floorToPowerOfTwo = dop = Object.create( null );
+
+dop.onAtom = function floor( o )
+{
+  o.dstElement = _.floorToPowerOfTwo( o.srcElement );
+}
+
+//
+
+var ceilToPowerOfTwo = dop = Object.create( null );
+
+dop.onAtom = function ceil( o )
+{
+  o.dstElement = _.ceilToPowerOfTwo( o.srcElement );
+}
+
+//
+
+var roundToPowerOfTwo = dop = Object.create( null );
+
+dop.onAtom = function round( o )
+{
+  o.dstElement = _.roundToPowerOfTwo( o.srcElement );
 }
 
 //
@@ -125,9 +180,9 @@ function operationSinglerAdjust()
 {
   var atomWiseSingler = Self.atomWiseSingler = Self.atomWiseSingler || Object.create( null );
 
-  for( var op in Routines.atomWiseSingler )
+  for( var dop in Routines.atomWiseSingler )
   {
-    var operation = Routines.atomWiseSingler[ op ];
+    var operation = Routines.atomWiseSingler[ dop ];
 
     operationNormalize1( operation );
 
@@ -147,11 +202,11 @@ function operationSinglerAdjust()
 
     _.assert( _.arrayIs( operation.takingArguments ) );
     _.assert( operation.takingArguments.length === 2 );
-    _.assert( !Self.atomWiseSingler[ op ] );
+    _.assert( !Self.atomWiseSingler[ dop ] );
 
     operationNormalize2( operation );
 
-    Self.atomWiseSingler[ op ] = operation;
+    Self.atomWiseSingler[ dop ] = operation;
   }
 
 }
@@ -160,63 +215,63 @@ function operationSinglerAdjust()
 // logic1
 // --
 
-var isZero = op = Object.create( null );
+var isZero = dop = Object.create( null );
 
-op.onAtom = function isZero( o )
+dop.onAtom = function isZero( o )
 {
   o.dstElement = o.srcElement === 0;
 }
 
 //
 
-var isNumber = op = Object.create( null );
+var isNumber = dop = Object.create( null );
 
-op.onAtom = function isNumber( o )
+dop.onAtom = function isNumber( o )
 {
   o.dstElement = _.numberIs( o.srcElement );
 }
 
 //
 
-var isFinite = op = Object.create( null );
+var isFinite = dop = Object.create( null );
 
-op.onAtom = function isFinite( o )
+dop.onAtom = function isFinite( o )
 {
   o.dstElement = _.numberIsFinite( o.srcElement );
 }
 
 //
 
-var isInfinite = op = Object.create( null );
+var isInfinite = dop = Object.create( null );
 
-op.onAtom = function isInfinite( o )
+dop.onAtom = function isInfinite( o )
 {
   o.dstElement = _.numberIsInfinite( o.srcElement );
 }
 
 //
 
-var isNan = op = Object.create( null );
+var isNan = dop = Object.create( null );
 
-op.onAtom = function isNan( o )
+dop.onAtom = function isNan( o )
 {
   o.dstElement = isNaN( o.srcElement );
 }
 
 //
 
-var isInt = op = Object.create( null );
+var isInt = dop = Object.create( null );
 
-op.onAtom = function isInt( o )
+dop.onAtom = function isInt( o )
 {
   o.dstElement = _.numberIsInt( o.srcElement );
 }
 
 //
 
-var isString = op = Object.create( null );
+var isString = dop = Object.create( null );
 
-op.onAtom = function isString( o )
+dop.onAtom = function isString( o )
 {
   o.dstElement = _.strIs( o.srcElement );
 }
@@ -227,9 +282,9 @@ function operationsLogical1Adjust()
 {
   var logic1 = Self.logic1 = Self.logic1 || Object.create( null );
 
-  for( var op in Routines.logic1 )
+  for( var dop in Routines.logic1 )
   {
-    var operation = Routines.logic1[ op ];
+    var operation = Routines.logic1[ dop ];
 
     operationNormalize1( operation );
 
@@ -261,11 +316,11 @@ function operationsLogical1Adjust()
     // // _.assert( operation.takingArguments.length === 2 );
     // _.assert( _.strIsNotEmpty( operation.name ) );
     // _.assert( operation.onAtom.length === 1 );
-    _.assert( !Self.logic1[ op ] );
+    _.assert( !Self.logic1[ dop ] );
 
     operationNormalize2( operation );
 
-    Self.logic1[ op ] = operation;
+    Self.logic1[ dop ] = operation;
   }
 
 }
@@ -274,7 +329,7 @@ function operationsLogical1Adjust()
 // logical2
 // --
 
-var isIdentical = op = Object.create( null );
+var isIdentical = dop = Object.create( null );
 
 isIdentical.onAtom = function isIdentical( o )
 {
@@ -283,63 +338,63 @@ isIdentical.onAtom = function isIdentical( o )
 
 //
 
-var isNotIdentical = op = Object.create( null );
+var isNotIdentical = dop = Object.create( null );
 
-op.onAtom = function isNotIdentical( o )
+dop.onAtom = function isNotIdentical( o )
 {
   o.dstElement = o.dstElement !== o.srcElement;
 }
 
 //
 
-var isEquivalent = op = Object.create( null );
+var isEquivalent = dop = Object.create( null );
 
-op.onAtom = function isEquivalent( o )
+dop.onAtom = function isEquivalent( o )
 {
   o.dstElement = _.numbersAreEquivalent( o.dstElement,o.srcElement );
 }
 
 //
 
-var isNotEquivalent = op = Object.create( null );
+var isNotEquivalent = dop = Object.create( null );
 
-op.onAtom = function isNotEquivalent( o )
+dop.onAtom = function isNotEquivalent( o )
 {
   o.dstElement = !_.numbersAreEquivalent( o.dstElement,o.srcElement );
 }
 
 //
 
-var isGreater = op = Object.create( null );
+var isGreater = dop = Object.create( null );
 
-op.onAtom = function isGreater( o )
+dop.onAtom = function isGreater( o )
 {
   o.dstElement = o.dstElement > o.srcElement;
 }
 
 //
 
-var isGreaterEqual = op = Object.create( null );
+var isGreaterEqual = dop = Object.create( null );
 
-op.onAtom = function isGreaterEqual( o )
+dop.onAtom = function isGreaterEqual( o )
 {
   o.dstElement = o.dstElement >= o.srcElement;
 }
 
 //
 
-var isLess = op = Object.create( null );
+var isLess = dop = Object.create( null );
 
-op.onAtom = function isLess( o )
+dop.onAtom = function isLess( o )
 {
   o.dstElement = o.dstElement < o.srcElement;
 }
 
 //
 
-var isLessEqual = op = Object.create( null );
+var isLessEqual = dop = Object.create( null );
 
-op.onAtom = function isLessEqual( o )
+dop.onAtom = function isLessEqual( o )
 {
   o.dstElement = o.dstElement <= o.srcElement;
 }
@@ -350,9 +405,9 @@ function operationsLogical2Adjust()
 {
   var logical2 = Self.logical2 = Self.logical2 || Object.create( null );
 
-  for( var op in Routines.logical2 )
+  for( var dop in Routines.logical2 )
   {
-    var operation = Routines.logical2[ op ];
+    var operation = Routines.logical2[ dop ];
 
     operationNormalize1( operation );
 
@@ -376,11 +431,11 @@ function operationsLogical2Adjust()
 
     // operation.onAtom.operation = operation;
 
-    _.assert( !Self.logical2[ op ] );
+    _.assert( !Self.logical2[ dop ] );
 
     operationNormalize2( operation );
 
-    Self.logical2[ op ] = operation;
+    Self.logical2[ dop ] = operation;
   }
 
 }
@@ -389,7 +444,7 @@ function operationsLogical2Adjust()
 // atomWiseHomogeneous
 // --
 
-var add = op = Object.create( null );
+var add = dop = Object.create( null );
 
 add.onAtom = function add( o )
 {
@@ -403,7 +458,7 @@ add.onAtomsBegin = function addBegin( o )
 
 //
 
-var sub = op = Object.create( null );
+var sub = dop = Object.create( null );
 
 sub.onAtom = function sub( o )
 {
@@ -417,7 +472,7 @@ sub.onAtomsBegin = function subBegin( o )
 
 //
 
-var mul = op = Object.create( null );
+var mul = dop = Object.create( null );
 
 mul.onAtom = function mul( o )
 {
@@ -431,7 +486,7 @@ mul.onAtomsBegin = function mulBegin( o )
 
 //
 
-var div = op = Object.create( null );
+var div = dop = Object.create( null );
 
 div.onAtom = function div( o )
 {
@@ -445,7 +500,7 @@ div.onAtomsBegin = function divBegin( o )
 
 //
 
-var assign = op = Object.create( null );
+var assign = dop = Object.create( null );
 
 assign.onAtom = function assign( o )
 {
@@ -454,7 +509,7 @@ assign.onAtom = function assign( o )
 
 //
 
-var min = op = Object.create( null );
+var min = dop = Object.create( null );
 
 min.onAtom = function min( o )
 {
@@ -468,7 +523,7 @@ min.onAtomsBegin = function minBegin( o )
 
 //
 
-var max = op = Object.create( null );
+var max = dop = Object.create( null );
 
 max.onAtom = function max( o )
 {
@@ -486,9 +541,9 @@ function operationHomogeneousAdjust()
 {
   var atomWiseHomogeneous = Self.atomWiseHomogeneous = Self.atomWiseHomogeneous || Object.create( null );
 
-  for( var op in Routines.atomWiseHomogeneous )
+  for( var dop in Routines.atomWiseHomogeneous )
   {
-    var operation = Routines.atomWiseHomogeneous[ op ];
+    var operation = Routines.atomWiseHomogeneous[ dop ];
 
     operationNormalize1( operation );
 
@@ -510,11 +565,11 @@ function operationHomogeneousAdjust()
 
     _.assert( _.arrayIs( operation.takingArguments ) );
     _.assert( operation.takingArguments.length === 2 );
-    _.assert( !Self.atomWiseHomogeneous[ op ] );
+    _.assert( !Self.atomWiseHomogeneous[ dop ] );
 
     operationNormalize2( operation );
 
-    Self.atomWiseHomogeneous[ op ] = operation;
+    Self.atomWiseHomogeneous[ dop ] = operation;
   }
 }
 
@@ -522,78 +577,78 @@ function operationHomogeneousAdjust()
 // atomWiseHeterogeneous
 // --
 
-var addScaled = op = Object.create( null );
+var addScaled = dop = Object.create( null );
 
-op.onAtom = function addScaled( o )
+dop.onAtom = function addScaled( o )
 {
   _.assert( o.srcElements.length === 3 );
   o.dstElement = o.srcElements[ 0 ] + ( o.srcElements[ 1 ]*o.srcElements[ 2 ] );
 }
 
-op.takingArguments = [ 3,4 ];
-op.input = [ 'vw','vr|s*2' ];
-op.usingDstAsSrc = true;
+dop.takingArguments = [ 3,4 ];
+dop.input = [ 'vw','vr|s*2' ];
+dop.usingDstAsSrc = true;
 
 //
 
-var subScaled = op = Object.create( null );
+var subScaled = dop = Object.create( null );
 
-op.onAtom = function subScaled( o )
+dop.onAtom = function subScaled( o )
 {
   o.dstElement = o.srcElements[ 0 ] - ( o.srcElements[ 1 ]*o.srcElements[ 2 ] );
 }
 
-op.takingArguments = [ 3,4 ];
-op.input = [ 'vw','vr|s*2' ];
-op.usingDstAsSrc = true;
+dop.takingArguments = [ 3,4 ];
+dop.input = [ 'vw','vr|s*2' ];
+dop.usingDstAsSrc = true;
 
 //
 
-var mulScaled = op = Object.create( null );
+var mulScaled = dop = Object.create( null );
 
-op.onAtom = function mulScaled( o )
+dop.onAtom = function mulScaled( o )
 {
   o.dstElement = o.srcElements[ 0 ] * ( o.srcElements[ 1 ]*o.srcElements[ 2 ] );
 }
 
-op.takingArguments = [ 3,4 ];
-op.input = [ 'vw','vr|s*2' ];
-op.usingDstAsSrc = true;
+dop.takingArguments = [ 3,4 ];
+dop.input = [ 'vw','vr|s*2' ];
+dop.usingDstAsSrc = true;
 
 //
 
-var divScaled = op = Object.create( null );
+var divScaled = dop = Object.create( null );
 
-op.onAtom = function divScaled( o )
+dop.onAtom = function divScaled( o )
 {
   o.dstElement = o.srcElements[ 0 ] / ( o.srcElements[ 1 ]*o.srcElements[ 2 ] );
 }
 
-op.takingArguments = [ 3,4 ];
-op.input = [ 'vw','vr|s*2' ];
-op.usingDstAsSrc = true;
+dop.takingArguments = [ 3,4 ];
+dop.input = [ 'vw','vr|s*2' ];
+dop.usingDstAsSrc = true;
 
 //
 
-var clamp = op = Object.create( null );
+var clamp = dop = Object.create( null );
 
-op.onAtom = function clamp( o )
+dop.onAtom = function clamp( o )
 {
   o.dstElement = _min( _max( o.srcElements[ 0 ] , o.srcElements[ 1 ] ),o.srcElements[ 2 ] );
 }
 
-op.takingArguments = [ 3,4 ];
-op.returningNumber = true;
-op.returningAtomic = true;
-op.returningNew = true;
-op.usingDstAsSrc = true;
-op.input = [ 'vw|s','vr|s*3' ];
+dop.takingArguments = [ 3,4 ];
+dop.returningNumber = true;
+dop.returningAtomic = true;
+dop.returningNew = true;
+dop.usingDstAsSrc = true;
+dop.input = [ 'vw|s','vr|s*3' ];
 
 //
 
-var mix = op = Object.create( null );
+var mix = dop = Object.create( null );
 
-op.onAtom = function mix( o )
+dop.onAtom = function mix( o )
 {
 
   // if( o.srcElements.length === 2 )
@@ -607,13 +662,13 @@ op.onAtom = function mix( o )
 
 }
 
-op.takingArguments = [ 3,4 ];
-op.takingVectors = [ 0,4 ];
-op.returningNumber = true;
-op.returningAtomic = true;
-op.returningNew = true;
-op.usingDstAsSrc = true;
-op.input = [ 'vw|s','vr|s*3' ];
+dop.takingArguments = [ 3,4 ];
+dop.takingVectors = [ 0,4 ];
+dop.returningNumber = true;
+dop.returningAtomic = true;
+dop.returningNew = true;
+dop.usingDstAsSrc = true;
+dop.input = [ 'vw|s','vr|s*3' ];
 
 //
 
@@ -621,9 +676,9 @@ function operationHeterogeneousAdjust()
 {
   var atomWiseHeterogeneous = Self.atomWiseHeterogeneous = Self.atomWiseHeterogeneous || Object.create( null );
 
-  for( var op in Routines.atomWiseHeterogeneous )
+  for( var dop in Routines.atomWiseHeterogeneous )
   {
-    var operation = Routines.atomWiseHeterogeneous[ op ];
+    var operation = Routines.atomWiseHeterogeneous[ dop ];
 
     operationNormalize1( operation );
 
@@ -640,11 +695,11 @@ function operationHeterogeneousAdjust()
     _.assert( _.arrayIs( operation.takingArguments ) );
     _.assert( operation.takingArguments.length === 2 );
     _.assert( operation.input );
-    _.assert( !Self.atomWiseHeterogeneous[ op ] );
+    _.assert( !Self.atomWiseHeterogeneous[ dop ] );
 
     operationNormalize2( operation );
 
-    Self.atomWiseHeterogeneous[ op ] = operation;
+    Self.atomWiseHeterogeneous[ dop ] = operation;
 
   }
 }
@@ -656,7 +711,7 @@ function operationHeterogeneousAdjust()
 // atomWiseReducing
 // --
 
-var polynomApply = op = Object.create( null );
+var polynomApply = dop = Object.create( null );
 
 polynomApply.onAtom = function polynomApply( o )
 {
@@ -682,7 +737,7 @@ polynomApply.takingVectorsOnly = false;
 
 //
 
-var mean = op = Object.create( null );
+var mean = dop = Object.create( null );
 
 mean.onAtom = function mean( o )
 {
@@ -692,7 +747,7 @@ mean.onAtom = function mean( o )
 
 mean.onAtomsBegin = function( o )
 {
-  o.result = op = Object.create( null );
+  o.result = dop = Object.create( null );
   o.result.total = 0;
   o.result.nelement = 0;
 }
@@ -711,7 +766,7 @@ mean.takingVectors = 1;
 
 //
 
-var moment = op = Object.create( null );
+var moment = dop = Object.create( null );
 
 moment.onAtom = function moment( o )
 {
@@ -721,7 +776,7 @@ moment.onAtom = function moment( o )
 
 moment.onAtomsBegin = function( o )
 {
-  o.result = op = Object.create( null );
+  o.result = dop = Object.create( null );
   o.result.total = 0;
   o.result.nelement = 0;
 }
@@ -740,7 +795,7 @@ moment.takingVectors = 1;
 
 //
 
-var _momentCentral = op = Object.create( null );
+var _momentCentral = dop = Object.create( null );
 
 _momentCentral.onAtom = function _momentCentral( o )
 {
@@ -756,7 +811,7 @@ _momentCentral.onAtomsBegin = function( o )
   var mean = o.args[ 2 ];
   _.assert( _.numberIs( degree ) )
   _.assert( _.numberIs( mean ) )
-  o.result = op = Object.create( null );
+  o.result = dop = Object.create( null );
   o.result.total = 0;
   o.result.nelement = 0;
 }
@@ -775,7 +830,7 @@ _momentCentral.takingVectors = 1;
 
 //
 
-var reduceToMean = op = Object.create( null );
+var reduceToMean = dop = Object.create( null );
 
 reduceToMean.onAtom = function reduceToMean( o )
 {
@@ -785,7 +840,7 @@ reduceToMean.onAtom = function reduceToMean( o )
 
 reduceToMean.onAtomsBegin = function( o )
 {
-  o.result = op = Object.create( null );
+  o.result = dop = Object.create( null );
   o.result.total = 0;
   o.result.nelement = 0;
 }
@@ -800,7 +855,7 @@ reduceToMean.onAtomsEnd = function( o )
 
 //
 
-var reduceToProduct = op = Object.create( null );
+var reduceToProduct = dop = Object.create( null );
 
 reduceToProduct.onAtom = function reduceToProduct( o )
 {
@@ -814,7 +869,7 @@ reduceToProduct.onAtomsBegin = function( o )
 
 //
 
-var reduceToSum = op = Object.create( null );
+var reduceToSum = dop = Object.create( null );
 
 reduceToSum.onAtom = function reduceToSum( o )
 {
@@ -828,7 +883,7 @@ reduceToSum.onAtomsBegin = function( o )
 
 //
 
-var reduceToAbsSum = op = Object.create( null );
+var reduceToAbsSum = dop = Object.create( null );
 
 reduceToAbsSum.onAtom = function reduceToAbsSum( o )
 {
@@ -843,7 +898,7 @@ reduceToAbsSum.onAtomsBegin = function( o )
 
 //
 
-var reduceToMagSqr = op = Object.create( null );
+var reduceToMagSqr = dop = Object.create( null );
 
 reduceToMagSqr.onAtom = function reduceToMagSqr( o )
 {
@@ -870,9 +925,9 @@ function operationReducingAdjust()
 {
   var atomWiseReducing = Self.atomWiseReducing = Self.atomWiseReducing || Object.create( null );
 
-  for( var op in Routines.atomWiseReducing )
+  for( var dop in Routines.atomWiseReducing )
   {
-    var operation = Routines.atomWiseReducing[ op ];
+    var operation = Routines.atomWiseReducing[ dop ];
 
     operationNormalize1( operation );
 
@@ -892,11 +947,11 @@ function operationReducingAdjust()
 
     _.assert( _.arrayIs( operation.takingArguments ) );
     _.assert( operation.takingArguments.length === 2 );
-    _.assert( !Self.atomWiseReducing[ op ] );
+    _.assert( !Self.atomWiseReducing[ dop ] );
 
     operationNormalize2( operation );
 
-    Self.atomWiseReducing[ op ] = operation;
+    Self.atomWiseReducing[ dop ] = operation;
   }
 }
 
@@ -922,6 +977,10 @@ var Routines =
     floor : floorOperation,
     ceil : ceilOperation,
     round : roundOperation,
+
+    floorToPowerOfTwo : floorToPowerOfTwo,
+    ceilToPowerOfTwo : ceilToPowerOfTwo,
+    roundToPowerOfTwo : roundToPowerOfTwo,
 
   },
 

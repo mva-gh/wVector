@@ -2100,6 +2100,16 @@ var invOrOne = _operationTakingDstSrcReturningSelfComponentWise_functor
 
 //
 
+var absRoutine = _operationTakingDstSrcReturningSelfComponentWise_functor
+({
+  onEach : function _abs( dst,src,i )
+  {
+    dst.eSet( i, Math.abs( src.eGet( i ) ) );
+  }
+});
+
+//
+
 var floorRoutine = _operationTakingDstSrcReturningSelfComponentWise_functor
 ({
   onEach : function _floor( dst,src,i )
@@ -2120,22 +2130,22 @@ var ceilRoutine = _operationTakingDstSrcReturningSelfComponentWise_functor
 
 //
 
-var absRoutine = _operationTakingDstSrcReturningSelfComponentWise_functor
-({
-  onEach : function _abs( dst,src,i )
-  {
-    dst.eSet( i, Math.abs( src.eGet( i ) ) );
-  }
-});
-
-//
-
 var roundRoutine = _operationTakingDstSrcReturningSelfComponentWise_functor
 ({
   onEach : function _round( dst,src,i )
   {
     debugger;
     dst.eSet( i, Math.round( src.eGet( i ) ) );
+  }
+});
+
+//
+
+var ceilToPowerOfTwo = _operationTakingDstSrcReturningSelfComponentWise_functor
+({
+  onEach : function _ceil( dst,src,i )
+  {
+    dst.eSet( i, _.ceilToPowerOfTwo( src.eGet( i ) ) );
   }
 });
 
@@ -4634,6 +4644,8 @@ var RoutinesMathematical =
   ceil : ceilRoutine,
   abs : absRoutine,
   round : roundRoutine,
+
+  ceilToPowerOfTwo : ceilToPowerOfTwo,
 
   normalize : normalize,
 
