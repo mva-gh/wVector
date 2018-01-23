@@ -4,17 +4,23 @@
 
 if( typeof module !== 'undefined' )
 {
-
+  if( typeof wBase === 'undefined' )
   try
   {
-    require( '../../Base.s' );
+    try
+    {
+      require.resolve( '../../../../dwtools/Base.s' )/*fff*/;
+    }
+    finally
+    {
+      require( '../../../../dwtools/Base.s' )/*fff*/;
+    }
   }
   catch( err )
   {
     require( 'wTools' );
   }
-
-  var _ = wTools;
+var _ = wTools;
 
   _.include( 'wTesting' );
 
