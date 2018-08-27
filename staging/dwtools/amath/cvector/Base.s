@@ -1,59 +1,64 @@
-(function _cVector_s_() {
+(function _Base_s_() {
 
 'use strict';
 
+/**
+  @module Tools/math/Vector - Collection of functions for vector math. MathVector introduces missing in JavaScript type VectorImage. VectorImage is a reference, it does not contain data but only refer on actual ( aka Long ) container of lined data. VectorImage could have offset, length and stride what makes look original container differently. Length of VectorImage is not necessarily equal to the length of the original container, siblings elements of VectorImage is not necessarily sibling in the original container, so storage format of vectors does not make a big difference for math algorithms. MathVector implements functions for the VectorImage and mirrors them for Array/Buffer. Use MathVector to be more functional with math and less constrained with storage format.
+*/
+
+/**
+ * @file vector/Base.s.
+ */
+
 if( typeof module !== 'undefined' )
 {
-  if( typeof wBase === 'undefined' )
-  try
+
+  if( typeof _global_ === 'undefined' || !_global_.wBase )
   {
+    let toolsPath = '../../../dwtools/Base.s';
+    let toolsExternal = 0;
     try
     {
-      require.resolve( '../../../../dwtools/Base.s' )/*fff*/;
+      toolsPath = require.resolve( toolsPath );
     }
-    finally
+    catch( err )
     {
-      require( '../../../../dwtools/Base.s' )/*fff*/;
+      toolsExternal = 1;
+      require( 'wTools' );
     }
+    if( !toolsExternal )
+    require( toolsPath );
   }
-  catch( err )
-  {
-    require( 'wTools' );
-  }
-var _ = wTools;
-  _.include( 'wProto' );
 
-  try
-  {
-    require( '../arithmetic/cScalar.s' );
-  }
-  catch( err )
-  {
-    require( 'wscalar' );
-  }
+  let _ = _global_.wTools;
+
+  _.include( 'wProto' );
+  _.include( 'wMathScalar' )
 
 }
 
-var _ = wTools;
-var _hasLength = _.hasLength;
-var _min = Math.min;
-var _max = Math.max;
-var _arraySlice = _.arraySlice;
-var _sqrt = Math.sqrt;
-var _abs = Math.abs;
-var _sqr = _.sqr;
-var _assert = _.assert;
-var _assertMapHasOnly = _.assertMapHasOnly;
-var _routineIs = _.routineIs;
+let _ = _global_.wTools;
+let _hasLength = _.hasLength;
+let _min = Math.min;
+let _max = Math.max;
+let _arraySlice = _.longSlice;
+let _sqrt = Math.sqrt;
+let _abs = Math.abs;
+let _sqr = _.sqr;
+// let __assert = _.assert;
+let _assertMapHasOnly = _.assertMapHasOnly;
+let _routineIs = _.routineIs;
 
-if( _.EPS === undefined )
-_.EPS = 1e-5;
+// debugger;
+//
+// if( _.accuracy === undefined )
+// _.accuracy = 1e-7;
+//
+// if( _.accuracySqr === undefined )
+// _.accuracySqr = 1e-15;
 
-if( _.EPS2 === undefined )
-_.EPS2 = 1e-10;
-
-var Parent = null;
-var Self = Object.create( null );
+let Parent = null;
+let Self = Object.create( null );
 
 function Vector(){ throw _.err( 'should not be called' ) };
 Vector.prototype = Object.create( null );
@@ -65,16 +70,16 @@ Vector.prototype._vectorBuffer = null;
 
 function makeArrayOfLength( length )
 {
-  _.assert( arguments.length === 1 );
-  var srcArray = new this.ArrayType( length );
+  _.assert( arguments.length === 1, 'expects single argument' );
+  let srcArray = new this.ArrayType( length );
   return fromArray( srcArray );
 }
 
 function makeArrayOfLengthWithValue( length,value )
 {
-  _.assert( arguments.length === 2 );
-  var srcArray = new this.ArrayType( length );
-  for( var i = 0 ; i < length ; i++ )
+  _.assert( arguments.length === 2, 'expects exactly two arguments' );
+  let srcArray = new this.ArrayType( length );
+  for( let i = 0 ; i < length ; i++ )
   srcArray[ i ] = value;
   return fromArray( srcArray );
 }
@@ -102,12 +107,12 @@ _.constant( VectorFromNumber.prototype,
 function fromMaybeNumber( number,length )
 {
 
-  _.assert( arguments.length === 2 );
+  _.assert( arguments.length === 2, 'expects exactly two arguments' );
   _.assert( length >= 0 );
 
-  var numberIs = _.numberIs( number );
+  let numberIs = _.numberIs( number );
 
-  _.assert( numberIs || _.arrayLike( number ) || _.vectorIs( number ) );
+  _.assert( numberIs || _.longIs( number ) || _.vectorIs( number ) );
 
   if( !numberIs )
   {
@@ -115,7 +120,7 @@ function fromMaybeNumber( number,length )
     return this.fromArray( number );
   }
 
-  var result = new VectorFromNumber();
+  let result = new VectorFromNumber();
   result._vectorBuffer = [ number ];
   _.constant( result,{ length : length } );
 
@@ -131,7 +136,7 @@ function from( srcArray )
 
   if( _.vectorIs( srcArray ) )
   return srcArray;
-  else if( _.arrayLike( srcArray ) )
+  else if( _.longIs( srcArray ) )
   return fromArray( srcArray );
   else if( _.spaceIs( srcArray ) )
   {
@@ -178,13 +183,13 @@ _.constant( VectorFromArray.prototype,
 function fromArray( srcArray )
 {
 
-  _.assert( arguments.length === 1 );
-  _.assert( _.vectorIs( srcArray ) || _.arrayLike( srcArray ) );
+  _.assert( arguments.length === 1, 'expects single argument' );
+  _.assert( _.vectorIs( srcArray ) || _.longIs( srcArray ) );
 
   if( srcArray._vectorBuffer )
   return srcArray;
 
-  var result = new VectorFromArray();
+  let result = new VectorFromArray();
   result._vectorBuffer = srcArray;
 
   Object.freeze( result );
@@ -225,8 +230,8 @@ function fromSubArray( srcArray,offset,length )
   if( length === undefined )
   length = srcArray.length-offset;
 
-  _.assert( arguments.length === 2 || arguments.length === 3 );
-  _.assert( srcArray );
+  _.assert( arguments.length === 2 || arguments.length === 3, 'expects two or three arguments' );
+  _.assert( !!srcArray );
   _.assert( offset+length <= srcArray.length );
 
   if( srcArray._vectorBuffer )
@@ -244,7 +249,7 @@ function fromSubArray( srcArray,offset,length )
 
   }
 
-  var result = new VectorSub();
+  let result = new VectorSub();
   result._vectorBuffer = srcArray;
   result.length = length;
   result.offset = offset;
@@ -260,14 +265,14 @@ VectorSubArrayWithStride.prototype =
 {
   eGet : function( index )
   {
-    var i = this.offset+index*this.stride;
+    let i = this.offset+index*this.stride;
     _.assert( index < this.length );
     _.assert( i < this._vectorBuffer.length );
     return this._vectorBuffer[ i ];
   },
   eSet : function( index,src )
   {
-    var i = this.offset+index*this.stride;
+    let i = this.offset+index*this.stride;
     _.assert( index < this.length );
     _.assert( i < this._vectorBuffer.length );
     this._vectorBuffer[ i ] = src;
@@ -294,7 +299,7 @@ function fromSubArrayWithStride( srcArray,offset,length,stride )
     throw _.err( 'not implemented' );
   }
 
-  var result = new VectorSubArrayWithStride();
+  let result = new VectorSubArrayWithStride();
   result._vectorBuffer = srcArray;
   result.length = length;
   result.offset = offset;
@@ -308,7 +313,7 @@ function fromSubArrayWithStride( srcArray,offset,length,stride )
 
 function fromArrayWithStride( srcArray,stride )
 {
-  _.assert( arguments.length === 2 );
+  _.assert( arguments.length === 2, 'expects exactly two arguments' );
   return this.fromSubArrayWithStride( srcArray,0,Math.ceil( srcArray.length / stride ),stride );
 }
 
@@ -316,19 +321,19 @@ function fromArrayWithStride( srcArray,stride )
 
 function variants( variants )
 {
-  var result = _.arraySlice( variants );
-  var length;
+  let result = _.longSlice( variants );
+  let length;
 
-  _.assert( arguments.length === 1 );
-  _.arrayLike( variants );
+  _.assert( arguments.length === 1, 'expects single argument' );
+  _.longIs( variants );
 
   /* */
 
-  for( var v = 0 ; v < result.length ; v++ )
+  for( let v = 0 ; v < result.length ; v++ )
   {
-    var variant = result[ v ];
+    let variant = result[ v ];
 
-    _.assert( _.numberIs( variant ) || _.arrayLike( variant ) || _.vectorIs( variant ) );
+    _.assert( _.numberIs( variant ) || _.longIs( variant ) || _.vectorIs( variant ) );
 
     if( _.numberIs( variant ) )
     continue;
@@ -345,14 +350,14 @@ function variants( variants )
 
   /* */
 
-  for( var v = 0 ; v < result.length ; v++ )
+  for( let v = 0 ; v < result.length ; v++ )
   {
-    var variant = result[ v ];
+    let variant = result[ v ];
 
     if( _.vectorIs( variant ) )
     continue;
 
-    if( _.arrayLike( variant ) )
+    if( _.longIs( variant ) )
     variant = result[ v ] = _.vector.fromArray( variant );
     else
     variant = result[ v ] = _.vector.fromMaybeNumber( variant,length );
@@ -371,10 +376,10 @@ function withWrapper( o )
 
   if( _.objectIs( o.routine ) )
   {
-    var result = Object.create( null );
-    for( var r in o.routine )
+    let result = Object.create( null );
+    for( let r in o.routine )
     {
-      var optionsForWrapper = _.mapExtend( null,o );
+      let optionsForWrapper = _.mapExtend( null,o );
       optionsForWrapper.routine = o.routine[ r ];
       result[ r ] = withWrapper( optionsForWrapper );
     }
@@ -383,19 +388,19 @@ function withWrapper( o )
 
   /* */
 
-  var onReturn = o.onReturn;
-  var usingThisAsFirstArgument = o.usingThisAsFirstArgument ? 1 : 0;
-  var theRoutine = o.routine;
+  let onReturn = o.onReturn;
+  let usingThisAsFirstArgument = o.usingThisAsFirstArgument ? 1 : 0;
+  let theRoutine = o.routine;
 
-  var op = theRoutine.operation;
-  var takingArguments = op.takingArguments;
-  var takingVectors = op.takingVectors;
-  var takingVectorsOnly = op.takingVectorsOnly;
-  var returningSelf = op.returningSelf;
-  var returningNew = op.returningNew;
-  var returningArray = op.returningArray;
-  var modifying = op.modifying;
-  var notMethod = op.notMethod;
+  let op = theRoutine.operation;
+  let takingArguments = op.takingArguments;
+  let takingVectors = op.takingVectors;
+  let takingVectorsOnly = op.takingVectorsOnly;
+  let returningSelf = op.returningSelf;
+  let returningNew = op.returningNew;
+  let returningArray = op.returningArray;
+  let modifying = op.modifying;
+  let notMethod = op.notMethod;
 
   /* verification */
 
@@ -421,7 +426,7 @@ function withWrapper( o )
   takingVectors = Object.freeze([ takingVectors,takingVectors ]);
   else
   takingVectors = Object.freeze( takingVectors.slice() );
-  var hasOptionalVectors = takingVectors[ 0 ] !== takingVectors[ 1 ];
+  let hasOptionalVectors = takingVectors[ 0 ] !== takingVectors[ 1 ];
 
   /* */
 
@@ -431,7 +436,7 @@ function withWrapper( o )
     return arg;
 
     // if( _hasLength( arg ) && ( !_.Space || !( arg instanceof _.Space ) ) )
-    if( _.arrayLike( arg ) )
+    if( _.longIs( arg ) )
     return Self.fromArray( arg );
     return arg;
   }
@@ -440,13 +445,13 @@ function withWrapper( o )
 
   function vectorWrap()
   {
-    var l = arguments.length + usingThisAsFirstArgument;
-    var args = new Array( l );
+    let l = arguments.length + usingThisAsFirstArgument;
+    let args = new Array( l );
 
     _.assert( takingArguments[ 0 ] <= l && l <= takingArguments[ 1 ] );
 
-    var s = 0;
-    var d = 0;
+    let s = 0;
+    let d = 0;
     if( usingThisAsFirstArgument )
     {
       args[ d ] = this;
@@ -459,18 +464,19 @@ function withWrapper( o )
       _.assert( _.vectorIs( args[ d ] ) || ( d === 0 && returningNew ) );
     }
 
+    let optionalLength;
     if( hasOptionalVectors )
     {
-      var optionalLength = _min( takingVectors[ 1 ],l );
+      optionalLength = _min( takingVectors[ 1 ],l );
       for( ; d < optionalLength ; d++, s++ )
       args[ d ] = makeVector( arguments[ s ] );
     }
 
-    var optionalLength = _min( takingArguments[ 1 ],l );
+    optionalLength = _min( takingArguments[ 1 ],l );
     for( ; d < optionalLength ; d++, s++ )
     args[ d ] = arguments[ s ];
 
-    var result = theRoutine.apply( Self,args );
+    let result = theRoutine.apply( Self,args );
 
     return onReturn.call( this,result,theRoutine );
   }
@@ -485,7 +491,7 @@ function withWrapper( o )
 // from
 // --
 
-var routineFrom =
+let routineFrom =
 {
 
   makeArrayOfLength : makeArrayOfLength,
@@ -505,10 +511,10 @@ var routineFrom =
 }
 
 // --
-// proto
+// declare
 // --
 
-var Proto =
+let Proto =
 {
 
 
@@ -522,18 +528,16 @@ _.mapExtend( Self,Proto );
 Object.setPrototypeOf( Self,wTools );
 Self.constructor = function Vector(){};
 
-/*Object.setPrototypeOf( VectorPrototype,Self );*/
-// VectorPrototype.constructor = function Vector(){};
+_.vector = Self;
+_.Vector = Vector;
 
-wTools.vector = Self;
-wTools.Vector = Vector;
-// wTools.VectorPrototype = VectorPrototype;
+_.assert( _.routineIs( Self.withWrapper ) );
+_.assert( _.objectIs( Self.array ) );
+_.assert( _.routineIs( Self.array.arrayFromCoercing ) );
+_.assert( _.routineIs( Self.array.makeArrayOfLength ) );
 
-_.assert( Self.withWrapper );
-/* _.assert( Self.arrayFromCoercing ); */
-_.assert( Self.array );
-_.assert( Self.array.arrayFromCoercing );
-_.assert( Self.array.makeArrayOfLength );
+_.assert( _.numberIs( _.accuracy ) );
+_.assert( _.numberIs( _.accuracySqr ) );
 
 //
 

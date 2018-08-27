@@ -28,9 +28,9 @@
     "url": "https://github.com/Wandalen/wVector/issues"
   },
   "dependencies": {
-    "wTools": "",
     "wProto": "",
-    "wscalar": ""
+    "wTools": "",
+    "wmathscalar": ""
   },
   "devDependencies": {
     "wTesting": "",

@@ -4,42 +4,45 @@
 
 if( typeof module !== 'undefined' )
 {
-  if( typeof wBase === 'undefined' )
-  try
+
+  if( typeof _global_ === 'undefined' || !_global_.wBase )
   {
+    let toolsPath = '../../../dwtools/Base.s';
+    let toolsExternal = 0;
     try
     {
-      require.resolve( '../../../../dwtools/Base.s' )/*fff*/;
+      toolsPath = require.resolve( toolsPath );
     }
-    finally
+    catch( err )
     {
-      require( '../../../../dwtools/Base.s' )/*fff*/;
+      toolsExternal = 1;
+      require( 'wTools' );
     }
+    if( !toolsExternal )
+    require( toolsPath );
   }
-  catch( err )
-  {
-    require( 'wTools' );
-  }
-require( './Base.s' );
+
+
+  require( './Base.s' );
 
 }
 
-var _ = wTools;
-var _row = _.vector;
-var _min = Math.min;
-var _max = Math.max;
-var _arraySlice = Array.prototype.slice;
-var _sqrt = Math.sqrt;
-var _sqr = _.sqr;
+let _ = _global_.wTools;
+let _row = _.vector;
+let _min = Math.min;
+let _max = Math.max;
+let _arraySlice = Array.prototype.slice;
+let _sqrt = Math.sqrt;
+let _sqr = _.sqr;
 
-var Parent = null;
-var Self = Object.create( null );
+let Parent = null;
+let Self = Object.create( null );
 
 // --
-// proto
+// declare
 // --
 
-var Proto =
+let Proto =
 {
 }
 
@@ -53,8 +56,8 @@ _.accessorForbid
 // row wrap
 // --
 
-var routines = _row.RoutinesMathematical;
-for( var r in routines )
+let routines = _row.RoutinesMathematical;
+for( let r in routines )
 {
 
   if( Self[ r ] )
@@ -65,9 +68,9 @@ for( var r in routines )
 
   function onReturn( result,theRoutine )
   {
-    var op = theRoutine.operation;
+    let op = theRoutine.operation;
 
-    if( op.returningAtomic && _.atomicIs( result ) )
+    if( op.returningAtomic && _.primitiveIs( result ) )
     {
       return result;
     }
@@ -97,27 +100,24 @@ for( var r in routines )
 }
 
 // --
-// proto extension
+// declare extension
 // --
 
 Object.setPrototypeOf( Self,wTools );
 
 _.mapExtend( Self,Proto );
 
-wTools.avector = Self;
+_.avector = Self;
 
-// debugger;
-_._arrayDescriptorsApplyTo( Self );
-// debugger;
+_._arrayNameSpaceApplyTo( Self,'Float32' );
 _.assert( _.mapOwnKey( _.avector,'withArray' ) );
-_.assert( _.avector.withArray );
-_.assert( _.avector.withArray.Array );
-_.assert( _.avector.withArray.Float32 );
-// debugger;
+_.assert( _.objectIs( _.avector.withArray ) );
+_.assert( _.objectIs( _.avector.withArray.Array ) );
+_.assert( _.objectIs( _.avector.withArray.Float32 ) );
 
 _.assert( Object.getPrototypeOf( Self ) === wTools );
 _.assert( _.objectIs( _row.RoutinesMathematical ) );
 _.assert( !_.avector.isValid );
-_.assert( _.avector.allFinite );
+_.assert( _.routineIs( _.avector.allFinite ) );
 
 })();

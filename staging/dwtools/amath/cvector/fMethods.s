@@ -2,25 +2,25 @@
 
 'use strict';
 
-var _ = wTools;
-var _hasLength = _.hasLength;
-var _arraySlice = _.arraySlice;
-var _sqr = _.sqr;
-var _assert = _.assert;
-var _assertMapHasOnly = _.assertMapHasOnly;
-var _routineIs = _.routineIs;
+let _ = _global_.wTools;
+let _hasLength = _.hasLength;
+let _arraySlice = _.longSlice;
+let _sqr = _.sqr;
+// let __assert = _.assert;
+let _assertMapHasOnly = _.assertMapHasOnly;
+let _routineIs = _.routineIs;
 
-var _min = Math.min;
-var _max = Math.max;
-var _sqrt = Math.sqrt;
-var _abs = Math.abs;
+let _min = Math.min;
+let _max = Math.max;
+let _sqrt = Math.sqrt;
+let _abs = Math.abs;
 
-var EPS = _.EPS;
-var EPS2 = _.EPS2;
+let accuracy = _.accuracy;
+let accuracySqr = _.accuracySqr;
 
-var Parent = null;
-var Self = wTools.Vector;
-var vector = wTools.vector;
+let Parent = null;
+let Self = _.Vector;
+let vector = _.vector;
 
 // --
 // etc
@@ -28,24 +28,24 @@ var vector = wTools.vector;
 
 function to( cls )
 {
-  var self = this;
-  var result,array;
+  let self = this;
+  let result,array;
 
-  _.assert( arguments.length === 1 );
+  _.assert( arguments.length === 1, 'expects single argument' );
 
-  if( _.clsLikeArray( cls ) )
+  if( _.constructorLikeArray( cls ) )
   {
     result = new cls( self.length );
     array = result;
-    for( var i = 0 ; i < result.length ; i++ )
+    for( let i = 0 ; i < result.length ; i++ )
     array[ i ] = self.eGet( i );
     return result;
   }
-  else if( _.clsIsVector( cls ) )
+  else if( _.constructorIsVector( cls ) )
   {
     return this;
   }
-  else if( _.clsIsSpace( cls ) )
+  else if( _.constructorIsSpace( cls ) )
   {
     return _.Space.makeCol( this )
   }
@@ -57,8 +57,8 @@ function to( cls )
 
 function eGet( index )
 {
-  var self = this;
-  _.assert( arguments.length === 1 );
+  let self = this;
+  _.assert( arguments.length === 1, 'expects single argument' );
   return vector.eGet( self,index );
 }
 
@@ -66,8 +66,8 @@ function eGet( index )
 
 function eSet( index,val )
 {
-  var self = this;
-  _.assert( arguments.length === 2 );
+  let self = this;
+  _.assert( arguments.length === 2, 'expects exactly two arguments' );
   return vector.eGet( self,index,val );
 }
 
@@ -75,8 +75,8 @@ function eSet( index,val )
 
 function assign()
 {
-  var self = this;
-  var args = _.arraySlice( arguments );
+  let self = this;
+  let args = _.longSlice( arguments );
   args.unshift( self );
   return vector.assign.apply( vector,args );
 }
@@ -85,8 +85,8 @@ function assign()
 
 function copy( src )
 {
-  var self = this;
-  _.assert( arguments.length === 1 );
+  let self = this;
+  _.assert( arguments.length === 1, 'expects single argument' );
   return vector.assign( self,src );
 }
 
@@ -94,7 +94,7 @@ function copy( src )
 
 // function clone()
 // {
-//   var self = this;
+//   let self = this;
 //   _.assert( arguments.length === 0 );
 //   _.assert( _.vectorIs( self ) );
 //   return vector.clone( self );
@@ -104,7 +104,7 @@ function copy( src )
 
 function makeSimilar( length )
 {
-  var self = this;
+  let self = this;
   _.assert( arguments.length === 0 || arguments.length === 1 );
   return vector.makeSimilar( self,length );
 }
@@ -113,7 +113,7 @@ function makeSimilar( length )
 
 function slice( b,e )
 {
-  var self = this;
+  let self = this;
 
   _.assert( arguments.length <= 2 );
   _.assert( _.vectorIs( self ) );
@@ -125,7 +125,7 @@ function slice( b,e )
 
 function slicedArray( b,e )
 {
-  var self = this;
+  let self = this;
 
   _.assert( arguments.length <= 2 );
   _.assert( _.vectorIs( self ) );
@@ -137,7 +137,7 @@ function slicedArray( b,e )
 
 function slicedVector( b,e )
 {
-  var self = this;
+  let self = this;
 
   _.assert( arguments.length <= 2 );
   _.assert( _.vectorIs( self ) );
@@ -149,9 +149,9 @@ function slicedVector( b,e )
 
 function resizedArray( first,last,val )
 {
-  var self = this;
+  let self = this;
   _.assert( arguments.length <= 3 );
-  var result = vector.resizedArray( self,first,last,val );
+  let result = vector.resizedArray( self,first,last,val );
   return result;
 }
 
@@ -159,9 +159,9 @@ function resizedArray( first,last,val )
 
 function resizedVector( first,last,val )
 {
-  var self = this;
+  let self = this;
   _.assert( arguments.length <= 3 );
-  var result = vector.resizedVector( self,first,last,val );
+  let result = vector.resizedVector( self,first,last,val );
   return result;
 }
 
@@ -169,7 +169,7 @@ function resizedVector( first,last,val )
 
 function subarray( first,last )
 {
-  var self = this;
+  let self = this;
   _.assert( arguments.length === 1 || arguments.length === 2 );
   return vector.subarray( self,first,last );
 }
@@ -178,7 +178,7 @@ function subarray( first,last )
 
 function toArray()
 {
-  var self = this;
+  let self = this;
 
   _.assert( arguments.length === 0 );
   _.assert( _.vectorIs( self ) );
@@ -190,7 +190,7 @@ function toArray()
 
 function toStr( o )
 {
-  var self = this;
+  let self = this;
 
   _.assert( arguments.length === 0 || arguments.length === 1 );
   _.assert( _.mapIs( o ) || o === undefined );
@@ -203,7 +203,7 @@ function toStr( o )
 
 // function equalWith( src,o )
 // {
-//   var self = this;
+//   let self = this;
 //
 //   _.assert( arguments.length === 1 || arguments.length === 2 );
 //
@@ -212,12 +212,12 @@ function toStr( o )
 
 //
 
-function _equalWith( src2,iterator )
+function _equalWith( src2, it )
 {
-  var src1 = this;
-  _.assert( arguments.length === 2 );
-  debugger;
-  return vector._equalAre( src1,src2,iterator );
+  let src1 = this;
+  _.assert( arguments.length === 2, 'expects exactly two arguments' );
+  debugger; xxx
+  return vector._equalAre( src1, src2, it );
 }
 
 equalWith.takingArguments = 2;
@@ -229,11 +229,11 @@ equalWith.modifying = false;
 
 //
 
-function equalWith( src2,iterator )
+function equalWith( src2, it )
 {
-  var src1 = this;
+  let src1 = this;
   _.assert( arguments.length === 1 || arguments.length === 2 );
-  return vector.equalAre( src1,src2,iterator );
+  return vector.equalAre( src1, src2, it );
 }
 
 equalWith.takingArguments = 2;
@@ -245,12 +245,12 @@ equalWith.modifying = false;
 
 //
 
-function identicalWith( src2,iterator )
+function identicalWith( src2, it )
 {
-  var src1 = this;
+  let src1 = this;
   _.assert( arguments.length === 1 || arguments.length === 2 );
-  debugger;
-  return vector.identicalAre( src1,src2,iterator );
+  debugger; xxx
+  return vector.identicalAre( src1, src2, it );
 }
 
 identicalWith.takingArguments = 2;
@@ -262,12 +262,12 @@ identicalWith.modifying = false;
 
 //
 
-function equivalentWith( src2,iterator )
+function equivalentWith( src2, it )
 {
-  var src1 = this;
+  let src1 = this;
   _.assert( arguments.length === 1 || arguments.length === 2 );
-  debugger;
-  return vector.equivalentAre( src1,src2,iterator );
+  debugger; xxx
+  return vector.equivalentAre( src1, src2, it );
 }
 
 equivalentWith.takingArguments = [ 2,3 ];
@@ -281,8 +281,8 @@ equivalentWith.modifying = false;
 
 function sameWith( src2 )
 {
-  var src1 = this;
-  _.assert( arguments.length === 1 );
+  let src1 = this;
+  _.assert( arguments.length === 1, 'expects single argument' );
   if( src1._vectorBuffer !== src2._vectorBuffer )
   return false;
   if( src1.offset !== src2.offset )
@@ -317,10 +317,10 @@ hasShape.returningNew = false;
 hasShape.modifying = false;
 
 // --
-// proto
+// declare
 // --
 
-var Proto =
+let Proto =
 {
 
   to : to,
@@ -363,19 +363,19 @@ _.mapExtend( Self.prototype,Proto );
 function declareSingleArgumentRoutine( routine, r )
 {
 
-  var op = routine.operation;
+  let op = routine.operation;
 
   // if( r === 'allZero' )
   // debugger;
 
-  var absLike = op.returningOnly === 'self' && op.modifying && op.atomWise && op.homogeneous;
-  var reduceToScalarLike = op.returningOnly === 'atomic' && !op.modifying && op.atomWise && op.homogeneous;
+  let absLike = op.returningOnly === 'self' && op.modifying && op.atomWise && op.homogeneous;
+  let reduceToScalarLike = op.returningOnly === 'atomic' && !op.modifying && op.atomWise && op.homogeneous;
 
-  var singleArgument = _.arrayIdentical( op.takingArguments, [ 1,1 ] );
-  var oneOrTwoArguments = _.arrayIdentical( op.takingArguments, [ 1,2 ] );
-  var oneOrInfinity = _.arrayIdentical( op.takingArguments, [ 1,Infinity ] );
+  let singleArgument = _.arrayIdentical( op.takingArguments, [ 1,1 ] );
+  let oneOrTwoArguments = _.arrayIdentical( op.takingArguments, [ 1,2 ] );
+  let oneOrInfinity = _.arrayIdentical( op.takingArguments, [ 1,Infinity ] );
 
-  var doesFit = singleArgument || ( absLike && oneOrTwoArguments ) || ( reduceToScalarLike && ( singleArgument || oneOrInfinity ) );
+  let doesFit = singleArgument || ( absLike && oneOrTwoArguments ) || ( reduceToScalarLike && ( singleArgument || oneOrInfinity ) );
 
   if( !doesFit )
   return false;
@@ -395,7 +395,7 @@ function declareSingleArgumentRoutine( routine, r )
 
 function declareTwoArgumentsRoutine( routine, r )
 {
-  var op = routine.operation;
+  let op = routine.operation;
 
   // if( r === 'mulScalar' )
   // debugger;
@@ -410,7 +410,7 @@ function declareTwoArgumentsRoutine( routine, r )
 
   Self.prototype[ r ] = function scalarRoutine( scalar )
   {
-    _.assert( arguments.length === 1 );
+    _.assert( arguments.length === 1, 'expects single argument' );
     _.assert( _.vectorIs( this ) );
     return routine.call( vector,this,scalar );
   }
@@ -419,10 +419,10 @@ function declareTwoArgumentsRoutine( routine, r )
 
 //
 
-var routines = _.vector.RoutinesMathematical;
-for( var r in routines )
+let routines = _.vector.RoutinesMathematical;
+for( let r in routines )
 {
-  var routine = routines[ r ];
+  let routine = routines[ r ];
 
   _.assert( _.routineIs( routine ) );
 
@@ -431,16 +431,16 @@ for( var r in routines )
 
 }
 
-_.assert( Self.prototype.mag );
-_.assert( Self.prototype.magSqr );
+_.assert( _.routineIs( Self.prototype.mag ) );
+_.assert( _.routineIs( Self.prototype.magSqr ) );
 
-_.assert( Self.prototype.toArray );
+_.assert( _.routineIs( Self.prototype.toArray ) );
 
-_.assert( Self.prototype.abs );
-_.assert( Self.prototype.makeSimilar );
-_.assert( Self.prototype.assign );
-_.assert( Self.prototype.slice );
+_.assert( _.routineIs( Self.prototype.abs ) );
+_.assert( _.routineIs( Self.prototype.makeSimilar ) );
+_.assert( _.routineIs( Self.prototype.assign ) );
+_.assert( _.routineIs( Self.prototype.slice ) );
 
-_.assert( Self.prototype.allZero );
+_.assert( _.routineIs( Self.prototype.allZero ) );
 
 })();
